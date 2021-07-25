@@ -4,7 +4,7 @@
 
 const mongoose = require('mongoose');
 
-const DB_URL = 'mongodb://lcs:123456@47.107.181.194/detcx';
+const DB_URL = 'mongodb://lcs:up2021@localhost/dev';
 const options = {
   useNewUrlParser: true,
   useUnifiedTopology: true
