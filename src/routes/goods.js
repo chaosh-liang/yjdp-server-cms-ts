@@ -6,12 +6,11 @@ const { ObjectId } = require('mongodb');
 // 主页的轮播图
 router.get("/home/banner", async ctx => {
   const res = await Goods.find({ home_banner: true }).exec();
-  console.log('asdf ', res);
   const banners = res.map(item => {
     return {
       id: item._id,
       name: item.name,
-      path: item.banner_url[0].path
+      path: item.banner_url[0].path // 拿第一张图
     }
   });
   ctx.body = { code: 200, data: banners, error_msg: '' };

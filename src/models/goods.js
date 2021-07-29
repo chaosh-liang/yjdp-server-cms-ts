@@ -10,12 +10,13 @@ const goodsSchema = new Schema({
   home_banner: Boolean,
   home_display: Boolean,
   desc: String,
-  unit: String,
+  currency_unit: String,
+  count_unit: String,
   icon_url: String,
   series_id: Schema.Types.ObjectId,
   category_id: Schema.Types.ObjectId,
-  desc_url: [String],
-  banner_url: [String]
+  desc_url: [Schema.Types.Mixed],
+  banner_url: [Schema.Types.Mixed]
 });
 
 module.exports = model("goods", goodsSchema);
@@ -33,19 +34,8 @@ module.exports = model("goods", goodsSchema);
   "icon_url":"/assets/images/iphone.jpg",
   "series_id":{"$oid":"60f586450811e699dc39fbc7"},
   "category_id": {"$oid":"60f433ca9f5a87b9f4c71941"},
-  "desc_url":[
-    "/assets/images/detail/detail1.png",
-    "/assets/images/detail/detail2.png",
-    "/assets/images/detail/detail3.png",
-    "/assets/images/detail/detail4.png"
-  ],
-  "banner_url": [
-    "/assets/images/detail/banner1.jpg",
-    "/assets/images/detail/banner2.jpg",
-    "/assets/images/detail/banner3.jpg",
-    "/assets/images/detail/banner4.jpg",
-    "/assets/images/detail/banner5.jpg"
-  ]
+  "desc_url":[{ _id: ObjectId('1234'), path: string }],
+  "banner_url": [{ _id: ObjectId('1234'), path: string }]
 } */
 
 
