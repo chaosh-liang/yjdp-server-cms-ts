@@ -1,6 +1,7 @@
 
 const router = require('@koa/router')();
 const Goods = require("../models/goods");
+const { ObjectId } = require('mongodb');
 
 // 主页的轮播图
 router.get("/home/banner", async ctx => {
@@ -18,6 +19,13 @@ router.get("/home/banner", async ctx => {
 // 主页的商品
 router.get("/home/products", async ctx => {
   const res = await Goods.find({ home_display: true }).exec();
+  ctx.body = { code: 200, data: res, error_msg: '' };
+});
+
+// 商品详情
+router.get("/detail", async ctx => {
+  const { request: { query: { id } } } = ctx;
+  const res = await Goods.findOne({ _id: ObjectId(id) }).exec();
   ctx.body = { code: 200, data: res, error_msg: '' };
 });
 
