@@ -20,4 +20,8 @@ router.use('/user', user);
 router.use('/goods', goods);
 app.use(router.routes()).use(router.allowedMethods());
 
-app.listen(7716);
+const port = 7716;
+
+app.listen(port, () => {
+  console.log(`port at: ${port}`);
+});
