@@ -1,4 +1,3 @@
-
 const mongoose = require('mongoose');
 const { Schema, model } = mongoose;
 
@@ -7,7 +6,7 @@ const schema = new Schema({
   name: String
 });
 
-module.exports = model('category', schema);
+module.exports = model('categories', schema);
 
 /* {
   _id: 'a125342f145',

@@ -1,6 +1,5 @@
-
 const router = require('@koa/router')();
-// const User = require('../model/user');
+// const Users = require('../model/users');
 
 router.get('/', async (ctx, next) => {
   ctx.body = 'get all users';

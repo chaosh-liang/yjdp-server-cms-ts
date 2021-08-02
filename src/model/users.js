@@ -10,7 +10,7 @@ const schema = new Schema({
   order: Array
 });
 
-module.exports = model('user', schema);
+module.exports = model('users', schema);
 
 /* {
   'nick': '一万年太久',
