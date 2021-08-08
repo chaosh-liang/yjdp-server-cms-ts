@@ -2,6 +2,12 @@ const router = require('@koa/router')();
 const Goods = require('../model/goods');
 const { ObjectId } = require('mongodb');
 
+// 获取所有的商品
+router.get('/', async ctx => {
+  const res = await Goods.find().exec();
+  ctx.body = { code: 200, data: res, error_msg: '' };
+});
+
 // 主页的轮播图
 router.get('/home/banner', async ctx => {
   const res = await Goods.find({ home_banner: true }).exec();
