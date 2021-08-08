@@ -5,7 +5,7 @@ const { ObjectId } = require('mongodb');
 // 获取所有的商品
 router.post('/', async ctx => {
   const { request: { body: { page_size = 10, page_index = 1 } } } = ctx;
-  const total = await Goods.find().estimatedDocumentCount();
+  const total = await Goods.find().estimatedDocumentCount(); // 总是返回 collections 记录总数，与查询条件无关
   const res = await Goods.find().skip(page_size * (page_index - 1)).limit(page_size);
   ctx.body = { code: 200, data: { res, total }, error_msg: 'Success' };
 });
