@@ -1,26 +1,27 @@
 const mongoose = require('mongoose');
 const { Schema, model } = mongoose;
 
-const schema = new Schema({
-  _id: Schema.Types.ObjectId,
-  name: String, // String is shorthand for {type: String}
-  discount_price: Number,
-  discount_threshold: Number,
-  price: Number,
-  home_banner: Boolean,
-  home_display: Boolean,
-  desc: String,
-  currency_unit: String,
-  count_unit: String,
-  icon_url: String,
-  series_id: Schema.Types.ObjectId,
-  category_id: Schema.Types.ObjectId,
-  desc_url: [Schema.Types.Mixed],
-  banner_url: [Schema.Types.Mixed]
-});
+const schema = new Schema(
+  {
+    name: String, // String is shorthand for {type: String}
+    discount_price: Number,
+    discount_threshold: Number,
+    price: Number,
+    home_banner: Boolean,
+    home_display: Boolean,
+    desc: String,
+    currency_unit: String,
+    count_unit: String,
+    icon_url: String,
+    series_id: Schema.Types.ObjectId,
+    category_id: Schema.Types.ObjectId,
+    desc_url: [Schema.Types.Mixed],
+    banner_url: [Schema.Types.Mixed],
+  },
+  { timestamps: { createdAt: 'created_time', updatedAt: 'update_time' } }
+);
 
 module.exports = model('goods', schema);
-
 
 /* {
   'name': 'iphone12',
@@ -38,5 +39,3 @@ module.exports = model('goods', schema);
   'desc_url':[{ _id: ObjectId('1234'), path: string }],
   'banner_url': [{ _id: ObjectId('1234'), path: string }]
 } */
-
-

@@ -1,4 +1,5 @@
 const Koa = require('koa');
+const cors = require('@koa/cors');
 const router = require('@koa/router')();
 const mongoConf = require('./src/config/mongo');
 const bodyParser = require('koa-bodyparser');
@@ -9,15 +10,7 @@ const categories = require('./src/routes/categories');
 const app = new Koa();
 mongoConf.connect();
 app.use(bodyParser());
-
-// 允许跨域
-app.use(async (ctx, next) => {
-  ctx.set('Access-Control-Allow-Origin', ctx.headers.origin); // 很奇怪的是，使用 * 会出现一些其他问题
-  ctx.set('Access-Control-Allow-Headers', 'content-type');
-  ctx.set('Access-Control-Allow-Methods', 'OPTIONS,GET,HEAD,PUT,POST,DELETE,PATCH');
-  ctx.set('Access-Control-Allow-Credentials', true);
-  await next();
-});
+app.use(cors()); // 配置跨域
 
 router.prefix('/api'); // 设置前缀
 

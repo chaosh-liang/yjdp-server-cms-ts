@@ -2,13 +2,16 @@ const mongoose = require('mongoose');
 const { Schema, model } = mongoose;
 
 // Schema
-const schema = new Schema({
-  _id: Schema.Types.ObjectId,
-  nick: String, // String is shorthand for {type: String}
-  session_key: String,
-  cart: Array,
-  order: Array
-});
+const schema = new Schema(
+  {
+    _id: Schema.Types.ObjectId,
+    nick: String, // String is shorthand for {type: String}
+    session_key: String,
+    cart: Array,
+    order: Array,
+  },
+  { timestamps: { createdAt: 'created_time', updatedAt: 'update_time' } }
+);
 
 module.exports = model('users', schema);
 
@@ -42,4 +45,3 @@ module.exports = model('users', schema);
     }
   ]
 } */
-

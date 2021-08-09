@@ -1,10 +1,12 @@
 const mongoose = require('mongoose');
 const { Schema, model } = mongoose;
 
-const schema = new Schema({
-  _id: Schema.Types.ObjectId,
-  name: String
-});
+const schema = new Schema(
+  {
+    name: String,
+  },
+  { timestamps: { createdAt: 'created_time', updatedAt: 'update_time' } }
+);
 
 module.exports = model('categories', schema);
 
