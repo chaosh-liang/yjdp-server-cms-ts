@@ -134,4 +134,37 @@ router.post('/add', async (ctx) => {
   ctx.body = returnInfo;
 });
 
+// 修改商品
+router.put('/update', async (ctx) => {
+  const { request: { body: params, body: { _id } } } = ctx;
+  let returnInfo = null;
+
+  Reflect.deleteProperty(params, '_id'); // 去掉第一层的 _id 字段
+
+  // 处理 数组中的 _id
+  // if (Reflect.has(params, 'banner_url')) {
+    params.banner_url?.forEach(item => {
+      item._id = Reflect.has(item, '_id') ? ObjectId(item._id) : ObjectId();
+    });
+  // }
+  // if (Reflect.has(params, 'desc_url')) {
+    params.desc_url?.forEach(item => {
+      item._id = Reflect.has(item, '_id') ? ObjectId(item._id) : ObjectId();
+    });
+  // }
+
+  try {
+    const res = await Goods.updateOne({ _id }, { ...params });
+    if (res.nModified === 1) {
+      returnInfo = { code: 200, data: null, error_msg: 'Success' };
+    } else {
+      returnInfo = { code: 500, data: null, error_msg: '未找到商品' };
+    };
+  } catch (error) {
+    returnInfo = { code: 500, data: null, error_msg: error };
+  }
+
+  ctx.body = returnInfo;
+});
+
 module.exports = router.routes();
