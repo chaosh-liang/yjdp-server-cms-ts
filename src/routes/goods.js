@@ -3,7 +3,7 @@ const Goods = require('../model/goods');
 const { ObjectId } = require('mongodb');
 
 // 获取所有的商品
-router.post('/', async (ctx) => {
+router.post('/', async ctx => {
   const {
     request: {
       body: { page_size = 10, page_index = 1 },
@@ -17,7 +17,7 @@ router.post('/', async (ctx) => {
 });
 
 // 主页的轮播图
-router.get('/home/banner', async (ctx) => {
+router.get('/home/banner', async ctx => {
   const res = await Goods.find({ home_banner: true });
   const banners = res.map((item) => {
     return {
@@ -30,7 +30,7 @@ router.get('/home/banner', async (ctx) => {
 });
 
 // 主页的商品
-router.post('/home/products', async (ctx) => {
+router.post('/home/products', async ctx => {
   const {
     request: {
       body: { page_index = 1, page_size = 10 },
@@ -44,7 +44,7 @@ router.post('/home/products', async (ctx) => {
 });
 
 // 某系列下的商品列表
-router.post('/series/:id', async (ctx) => {
+router.post('/series/:id', async ctx => {
   const {
     request: {
       params: { id },
@@ -67,7 +67,7 @@ router.post('/series/:id', async (ctx) => {
 });
 
 // 商品详情
-router.get('/detail/:id', async (ctx) => {
+router.get('/detail/:id', async ctx => {
   const {
     request: {
       params: { id },
@@ -78,7 +78,7 @@ router.get('/detail/:id', async (ctx) => {
 });
 
 // 添加商品
-router.post('/add', async (ctx) => {
+router.post('/add', async ctx => {
   const {
     request: {
       body: {
@@ -135,7 +135,7 @@ router.post('/add', async (ctx) => {
 });
 
 // 修改商品
-router.put('/update', async (ctx) => {
+router.put('/update', async ctx => {
   const { request: { body: params, body: { _id } } } = ctx;
 
   if (_id === void(0)) { // 如果没有传入 _id
@@ -170,7 +170,7 @@ router.put('/update', async (ctx) => {
 });
 
 // 批量删除商品
-router.delete('/delete', async (ctx) => {
+router.delete('/delete', async ctx => {
   const { request: { body: { ids } } } = ctx;
 
   if (ids === void(0)) { // 如果没有传入 ids

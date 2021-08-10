@@ -1,18 +1,18 @@
 const router = require('@koa/router')();
 // const Users = require('../model/users');
 
-router.get('/', async (ctx, next) => {
+router.get('/', async ctx => {
   ctx.body = 'get all users';
 });
 
-router.get('/:id', async (ctx, next) => {
+router.get('/:id', async ctx => {
   const { request: { query, body: params } } = ctx; // 参数
   console.log('query someone , params => ', params);
   console.log('query someone , query => ', query);
   ctx.body = { code: 200, add: 'test query' }; //这里为什么可以返回
 });
 
-router.post('/add', async (ctx, next) => {
+router.post('/add', async ctx => {
   const params = ctx.request.body; // 参数
   /* User.create(params, (err, result) => {
     if (!err) {
