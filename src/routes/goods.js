@@ -43,7 +43,7 @@ router.post('/home/products', async (ctx) => {
   ctx.body = { code: 200, data: { res, total }, error_msg: 'Success' };
 });
 
-// 某类别某系列下的商品
+// 某系列下的商品列表
 router.post('/series/:id', async (ctx) => {
   const {
     request: {
@@ -137,28 +137,56 @@ router.post('/add', async (ctx) => {
 // 修改商品
 router.put('/update', async (ctx) => {
   const { request: { body: params, body: { _id } } } = ctx;
+
+  if (_id === void(0)) { // 如果没有传入 _id
+    ctx.body = { code: 90, data: null, error_msg: '参数错误' }
+    return;
+  }
+
   let returnInfo = null;
 
   Reflect.deleteProperty(params, '_id'); // 去掉第一层的 _id 字段
 
   // 处理 数组中的 _id
-  // if (Reflect.has(params, 'banner_url')) {
-    params.banner_url?.forEach(item => {
-      item._id = Reflect.has(item, '_id') ? ObjectId(item._id) : ObjectId();
-    });
-  // }
-  // if (Reflect.has(params, 'desc_url')) {
-    params.desc_url?.forEach(item => {
-      item._id = Reflect.has(item, '_id') ? ObjectId(item._id) : ObjectId();
-    });
-  // }
+  params.banner_url?.forEach(item => {
+    item._id = Reflect.has(item, '_id') ? ObjectId(item._id) : ObjectId();
+  });
+  params.desc_url?.forEach(item => {
+    item._id = Reflect.has(item, '_id') ? ObjectId(item._id) : ObjectId();
+  });
 
   try {
     const res = await Goods.updateOne({ _id }, { ...params });
     if (res.nModified === 1) {
       returnInfo = { code: 200, data: null, error_msg: 'Success' };
     } else {
-      returnInfo = { code: 500, data: null, error_msg: '未找到商品' };
+      returnInfo = { code: 91, data: null, error_msg: '未找到商品' };
+    };
+  } catch (error) {
+    returnInfo = { code: 500, data: null, error_msg: error };
+  }
+
+  ctx.body = returnInfo;
+});
+
+// 批量删除商品
+router.delete('/delete', async (ctx) => {
+  const { request: { body: { ids } } } = ctx;
+
+  if (ids === void(0)) { // 如果没有传入 ids
+    ctx.body = { code: 90, data: null, error_msg: '参数错误' }
+    return;
+  }
+
+  let returnInfo = null;
+
+  try {
+    const res = await Goods.deleteMany({ _id: { $in: ids } });
+    const { n, ok } = res;
+    if (ok === 1 && n !== 0) {
+      returnInfo = { code: 200, data: null, error_msg: 'Success' };
+    } else {
+      returnInfo = { code: 91, data: null, error_msg: '未找到商品' };
     };
   } catch (error) {
     returnInfo = { code: 500, data: null, error_msg: error };

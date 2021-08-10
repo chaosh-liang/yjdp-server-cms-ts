@@ -24,3 +24,9 @@ const port = 7716;
 app.listen(port, () => {
   console.log(`port at: ${port}`);
 });
+
+/** 
+ * Note: status
+ * 90: 参数错误
+ * 91：未找到商品
+*/
