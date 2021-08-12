@@ -13,7 +13,7 @@ router.post('/', async ctx => {
   const res = await Goods.find()
     .skip(page_size * (page_index - 1))
     .limit(page_size);
-  ctx.body = { code: 200, data: { res, total }, error_msg: 'Success' };
+  ctx.body = { error_code: '00', data: { res, total }, error_msg: 'Success' };
 });
 
 // 主页的轮播图
@@ -26,7 +26,7 @@ router.get('/home/banner', async ctx => {
       path: item.banner_url[0].path, // 拿第一张图
     };
   });
-  ctx.body = { code: 200, data: banners, error_msg: 'Success' };
+  ctx.body = { error_code: '00', data: banners, error_msg: 'Success' };
 });
 
 // 主页的商品
@@ -40,7 +40,7 @@ router.post('/home/products', async ctx => {
   const res = await Goods.find({ home_display: true })
     .skip(page_size * (page_index - 1))
     .limit(page_size);
-  ctx.body = { code: 200, data: { res, total }, error_msg: 'Success' };
+  ctx.body = { error_code: '00', data: { res, total }, error_msg: 'Success' };
 });
 
 // 某系列下的商品列表
@@ -63,7 +63,7 @@ router.post('/series/:id', async ctx => {
     desc: item.desc,
     currency_unit: item.currency_unit,
   }));
-  ctx.body = { code: 200, data: { res: lite, total }, error_msg: 'Success' };
+  ctx.body = { error_code: '00', data: { res: lite, total }, error_msg: 'Success' };
 });
 
 // 商品详情
@@ -74,7 +74,7 @@ router.get('/detail/:id', async ctx => {
     },
   } = ctx;
   const res = await Goods.findOne({ _id: ObjectId(id) });
-  ctx.body = { code: 200, data: res, error_msg: 'Success' };
+  ctx.body = { error_code: '00', data: res, error_msg: 'Success' };
 });
 
 // 添加商品
@@ -126,9 +126,9 @@ router.post('/add', async ctx => {
       series_id: ObjectId(series_id),
       category_id: ObjectId(category_id),
     });
-    returnInfo = { code: 200, data: null, error_msg: 'Success' };
+    returnInfo = { error_code: '00', data: null, error_msg: 'Success' };
   } catch (error) {
-    returnInfo = { code: 500, data: null, error_msg: error };
+    returnInfo = { error_code: 500, data: null, error_msg: error };
   }
 
   ctx.body = returnInfo;
@@ -139,7 +139,7 @@ router.put('/update', async ctx => {
   const { request: { body: params, body: { _id } } } = ctx;
 
   if (_id === void(0)) { // 如果没有传入 _id
-    ctx.body = { code: 90, data: null, error_msg: '参数错误' }
+    ctx.body = { error_code: 90, data: null, error_msg: '参数错误' }
     return;
   }
 
@@ -158,12 +158,12 @@ router.put('/update', async ctx => {
   try {
     const res = await Goods.updateOne({ _id }, { ...params });
     if (res.nModified === 1) {
-      returnInfo = { code: 200, data: null, error_msg: 'Success' };
+      returnInfo = { error_code: '00', data: null, error_msg: 'Success' };
     } else {
-      returnInfo = { code: 91, data: null, error_msg: '未找到商品' };
+      returnInfo = { error_code: 91, data: null, error_msg: '未找到商品' };
     };
   } catch (error) {
-    returnInfo = { code: 500, data: null, error_msg: error };
+    returnInfo = { error_code: 500, data: null, error_msg: error };
   }
 
   ctx.body = returnInfo;
@@ -174,7 +174,7 @@ router.delete('/delete', async ctx => {
   const { request: { body: { ids } } } = ctx;
 
   if (ids === void(0)) { // 如果没有传入 ids
-    ctx.body = { code: 90, data: null, error_msg: '参数错误' }
+    ctx.body = { error_code: 90, data: null, error_msg: '参数错误' }
     return;
   }
 
@@ -184,12 +184,12 @@ router.delete('/delete', async ctx => {
     const res = await Goods.deleteMany({ _id: { $in: ids } });
     const { n, ok } = res;
     if (ok === 1 && n !== 0) {
-      returnInfo = { code: 200, data: null, error_msg: 'Success' };
+      returnInfo = { error_code: '00', data: null, error_msg: 'Success' };
     } else {
-      returnInfo = { code: 91, data: null, error_msg: '未找到商品' };
+      returnInfo = { error_code: 91, data: null, error_msg: '未找到商品' };
     };
   } catch (error) {
-    returnInfo = { code: 500, data: null, error_msg: error };
+    returnInfo = { error_code: 500, data: null, error_msg: error };
   }
 
   ctx.body = returnInfo;
