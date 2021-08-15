@@ -9,10 +9,24 @@ router.get('/', async ctx => {
   ctx.body = { error_code: '00', data: res, error_msg: 'Success' };
 });
 
-// 某个菜单下的系列
-router.get('/:id', async ctx => {
+// 某个类别的详情
+router.get('/detail/:id', async ctx => {
+  const { request: { params: { id } } } = ctx;
+  const res = await Category.find({ _id: ObjectId(id) });
+  ctx.body = { error_code: '00', data: res, error_msg: 'Success' };
+});
+
+// 某个类别下的所有系列
+router.get('/s/:id', async ctx => {
   const { request: { params: { id } } } = ctx;
   const res = await Series.find({ category_id: ObjectId(id) });
+  ctx.body = { error_code: '00', data: res, error_msg: 'Success' };
+});
+
+// 某个系列的详情
+router.get('/s/detail/:id', async ctx => {
+  const { request: { params: { id } } } = ctx;
+  const res = await Series.find({ _id: ObjectId(id) });
   ctx.body = { error_code: '00', data: res, error_msg: 'Success' };
 });
 
