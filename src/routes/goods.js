@@ -3,21 +3,38 @@ const Goods = require('../model/goods');
 const { ObjectId } = require('mongodb');
 
 // TODO: 获取所有的商品
-router.post('/', async ctx => {
+router.post('/', async (ctx) => {
   const {
     request: {
       body: { page_size = 10, page_index = 1 },
     },
   } = ctx;
   const total = await Goods.find().estimatedDocumentCount(); // 总是返回 collections 记录总数，与查询条件无关
-  const res = await Goods.find()
+  const res = await Goods.aggregate() // 聚合，联表查询
+    .lookup({
+      from: 'categories',
+      localField: 'category_id',
+      foreignField: '_id',
+      as: 'category_data',
+    })
+    .lookup({
+      from: 'series',
+      localField: 'series_id',
+      foreignField: '_id',
+      as: 'series_data',
+    })
+    .sort({ update_time: -1, create_time: -1, _id: -1 })
     .skip(page_size * (page_index - 1))
     .limit(page_size);
-  ctx.body = { error_code: '00', data: { res, total }, error_msg: 'Success' };
+  ctx.body = {
+    error_code: '00',
+    data: { res, total, page_index, page_size },
+    error_msg: 'Success',
+  };
 });
 
 // 主页的轮播图
-router.get('/home/banner', async ctx => {
+router.get('/home/banner', async (ctx) => {
   const res = await Goods.find({ home_banner: true });
   const banners = res.map((item) => {
     return {
@@ -30,7 +47,7 @@ router.get('/home/banner', async ctx => {
 });
 
 // 主页的商品
-router.post('/home/products', async ctx => {
+router.post('/home/products', async (ctx) => {
   const {
     request: {
       body: { page_index = 1, page_size = 10 },
@@ -40,11 +57,15 @@ router.post('/home/products', async ctx => {
   const res = await Goods.find({ home_display: true })
     .skip(page_size * (page_index - 1))
     .limit(page_size);
-  ctx.body = { error_code: '00', data: { res, total }, error_msg: 'Success' };
+  ctx.body = {
+    error_code: '00',
+    data: { res, total, page_index, page_size },
+    error_msg: 'Success',
+  };
 });
 
 // 某系列下的商品列表
-router.post('/series/:id', async ctx => {
+router.post('/series/:id', async (ctx) => {
   const {
     request: {
       params: { id },
@@ -63,11 +84,15 @@ router.post('/series/:id', async ctx => {
     desc: item.desc,
     currency_unit: item.currency_unit,
   }));
-  ctx.body = { error_code: '00', data: { res: lite, total }, error_msg: 'Success' };
+  ctx.body = {
+    error_code: '00',
+    data: { res: lite, total, page_index, page_size },
+    error_msg: 'Success',
+  };
 });
 
 // TODO: 商品详情
-router.get('/detail/:id', async ctx => {
+router.get('/detail/:id', async (ctx) => {
   const {
     request: {
       params: { id },
@@ -78,7 +103,7 @@ router.get('/detail/:id', async ctx => {
 });
 
 // 添加商品
-router.post('/add', async ctx => {
+router.post('/add', async (ctx) => {
   const {
     request: {
       body: {
@@ -135,11 +160,17 @@ router.post('/add', async ctx => {
 });
 
 // 修改商品
-router.put('/update', async ctx => {
-  const { request: { body: params, body: { _id } } } = ctx;
+router.put('/update', async (ctx) => {
+  const {
+    request: {
+      body: params,
+      body: { _id },
+    },
+  } = ctx;
 
-  if (_id === void(0)) { // 如果没有传入 _id
-    ctx.body = { error_code: 90, data: null, error_msg: '参数错误' }
+  if (_id === void 0) {
+    // 如果没有传入 _id
+    ctx.body = { error_code: 90, data: null, error_msg: '参数错误' };
     return;
   }
 
@@ -148,10 +179,10 @@ router.put('/update', async ctx => {
   Reflect.deleteProperty(params, '_id'); // 去掉第一层的 _id 字段
 
   // 处理 数组中的 _id
-  params.banner_url?.forEach(item => {
+  params.banner_url?.forEach((item) => {
     item._id = Reflect.has(item, '_id') ? ObjectId(item._id) : ObjectId();
   });
-  params.desc_url?.forEach(item => {
+  params.desc_url?.forEach((item) => {
     item._id = Reflect.has(item, '_id') ? ObjectId(item._id) : ObjectId();
   });
 
@@ -161,7 +192,7 @@ router.put('/update', async ctx => {
       returnInfo = { error_code: '00', data: null, error_msg: 'Success' };
     } else {
       returnInfo = { error_code: 91, data: null, error_msg: '未找到商品' };
-    };
+    }
   } catch (error) {
     returnInfo = { error_code: 500, data: null, error_msg: error };
   }
@@ -170,11 +201,16 @@ router.put('/update', async ctx => {
 });
 
 // 批量删除商品
-router.delete('/delete', async ctx => {
-  const { request: { body: { ids } } } = ctx;
+router.delete('/delete', async (ctx) => {
+  const {
+    request: {
+      body: { ids },
+    },
+  } = ctx;
 
-  if (ids === void(0)) { // 如果没有传入 ids
-    ctx.body = { error_code: 90, data: null, error_msg: '参数错误' }
+  if (ids === void 0) {
+    // 如果没有传入 ids
+    ctx.body = { error_code: 90, data: null, error_msg: '参数错误' };
     return;
   }
 
@@ -187,7 +223,7 @@ router.delete('/delete', async ctx => {
       returnInfo = { error_code: '00', data: null, error_msg: 'Success' };
     } else {
       returnInfo = { error_code: 91, data: null, error_msg: '未找到商品' };
-    };
+    }
   } catch (error) {
     returnInfo = { error_code: 500, data: null, error_msg: error };
   }
