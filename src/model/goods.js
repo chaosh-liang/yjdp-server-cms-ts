@@ -18,7 +18,7 @@ const schema = new Schema(
     desc_url: [Schema.Types.Mixed],
     banner_url: [Schema.Types.Mixed],
   },
-  { timestamps: { createdAt: 'created_time', updatedAt: 'update_time' } }
+  { timestamps: { createdAt: 'create_time', updatedAt: 'update_time' } }
 );
 
 module.exports = model('goods', schema);

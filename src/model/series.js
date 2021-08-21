@@ -5,9 +5,10 @@ const schema = new Schema(
   {
     name: String,
     icon_url: String,
+    no: Number, // 序号
     category_id: Schema.Types.ObjectId,
   },
-  { timestamps: { createdAt: 'created_time', updatedAt: 'update_time' } }
+  { timestamps: { createdAt: 'create_time', updatedAt: 'update_time' } }
 );
 
 module.exports = model('series', schema);
