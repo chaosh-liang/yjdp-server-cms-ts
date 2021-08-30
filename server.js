@@ -12,7 +12,7 @@ mongoConf.connect();
 app.use(bodyParser());
 app.use(cors()); // 配置跨域
 
-router.prefix('/api'); // 设置前缀
+router.prefix('/dadudu/api'); // 设置前缀
 
 router.use('/user', users);
 router.use('/goods', goods);
