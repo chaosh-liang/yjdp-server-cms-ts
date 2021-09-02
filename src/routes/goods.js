@@ -43,7 +43,7 @@ router.get('/home/banner', async (ctx) => {
       path: item.banner_url[0].path, // 拿第一张图
     };
   });
-  ctx.body = { error_code: '00', data: banners, error_msg: 'Success' };
+  ctx.body = { error_code: '00', data: { res: banners }, error_msg: 'Success' };
 });
 
 // 主页的商品
@@ -99,7 +99,7 @@ router.get('/detail/:id', async (ctx) => {
     },
   } = ctx;
   const res = await Goods.findOne({ _id: ObjectId(id) });
-  ctx.body = { error_code: '00', data: res, error_msg: 'Success' };
+  ctx.body = { error_code: '00', data: { res }, error_msg: 'Success' };
 });
 
 // 添加商品
