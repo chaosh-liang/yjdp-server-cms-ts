@@ -47,3 +47,4 @@ debug.log
 /dist
 .cache
 .analysis
+/public/upload/*
