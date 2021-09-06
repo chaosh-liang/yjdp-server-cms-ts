@@ -40,7 +40,7 @@ router.get('/home/banner', async (ctx) => {
     return {
       _id: item._id,
       name: item.name,
-      path: item.banner_url[0].path, // 拿第一张图
+      path: item.banner_url[0], // 拿第一张图
     };
   });
   ctx.body = { error_code: '00', data: { res: banners }, error_msg: 'Success' };
@@ -91,7 +91,7 @@ router.post('/series/:id', async (ctx) => {
   };
 });
 
-// TODO: 商品详情
+// 商品详情
 router.get('/detail/:id', async (ctx) => {
   const {
     request: {
@@ -124,13 +124,6 @@ router.post('/add', async (ctx) => {
       },
     },
   } = ctx;
-
-  banner_url.forEach((item) => {
-    if (!Reflect.has(item, '_id')) item._id = ObjectId(); // _id：与其他 _id 重复没关系，只要这个集合里唯一即可
-  });
-  desc_url.forEach((item) => {
-    if (!Reflect.has(item, '_id')) item._id = ObjectId();
-  });
 
   let returnInfo = null;
 
@@ -176,15 +169,9 @@ router.put('/update', async (ctx) => {
 
   let returnInfo = null;
 
-  Reflect.deleteProperty(params, '_id'); // 去掉第一层的 _id 字段
-
-  // 处理 数组中的 _id
-  params.banner_url?.forEach((item) => {
-    item._id = Reflect.has(item, '_id') ? ObjectId(item._id) : ObjectId();
-  });
-  params.desc_url?.forEach((item) => {
-    item._id = Reflect.has(item, '_id') ? ObjectId(item._id) : ObjectId();
-  });
+  Reflect.deleteProperty(params, '_id'); // 去掉第一层的 _id 字段，因为 _id 不需要设置
+  params.category_id = ObjectId(params.category_id);
+  params.series_id = ObjectId(params.series_id);
 
   try {
     const res = await Goods.updateOne({ _id }, { ...params });

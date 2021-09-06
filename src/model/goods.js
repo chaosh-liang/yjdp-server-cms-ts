@@ -15,8 +15,8 @@ const schema = new Schema(
     icon_url: String,
     series_id: Schema.Types.ObjectId,
     category_id: Schema.Types.ObjectId,
-    desc_url: [Schema.Types.Mixed],
-    banner_url: [Schema.Types.Mixed],
+    desc_url: [String],
+    banner_url: [String],
   },
   { timestamps: { createdAt: 'create_time', updatedAt: 'update_time' } }
 );
@@ -33,9 +33,9 @@ module.exports = model('goods', schema);
   'home_banner':true,
   'home_display': true,
   'desc':'Apple iPhone 12 128G 蓝色 5G 手机 Apple iPhone 12 128G 蓝色 5G 手机',
-  'icon_url':'/assets/images/iphone.jpg',
-  'series_id':{'_id':'ObjectId(60f586450811e699dc39fbc7')},
-  'category_id': {'_id':ObjectId('60f433ca9f5a87b9f4c71941')},
-  'desc_url':[{ _id: ObjectId('1234'), path: string }],
-  'banner_url': [{ _id: ObjectId('1234'), path: string }]
+  'icon_url': '/assets/images/iphone.jpg',
+  'series_id': ObjectId(60f586450811e699dc39fbc7'),
+  'category_id': ObjectId('60f433ca9f5a87b9f4c71941'),
+  'desc_url':['/assets/images/iphone.jpg'],
+  'banner_url': ['/assets/images/iphone.jpg']
 } */
