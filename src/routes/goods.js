@@ -170,8 +170,8 @@ router.put('/update', async (ctx) => {
   let returnInfo = null;
 
   Reflect.deleteProperty(params, '_id'); // 去掉第一层的 _id 字段，因为 _id 不需要设置
-  params.category_id = ObjectId(params.category_id);
-  params.series_id = ObjectId(params.series_id);
+  if (Reflect.has(params, 'series_id')) { params.series_id = ObjectId(params.series_id); }
+  if (Reflect.has(params, 'category_id')) { params.category_id = ObjectId(params.category_id); }
 
   try {
     const res = await Goods.updateOne({ _id }, { ...params });
