@@ -2,7 +2,7 @@ const router = require('@koa/router')();
 const Goods = require('../model/goods');
 const { ObjectId } = require('mongodb');
 
-// TODO: 获取所有的商品
+// 获取所有的商品-分页
 router.post('/', async (ctx) => {
   const {
     request: {
