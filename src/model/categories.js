@@ -6,7 +6,6 @@ const schema = new Schema(
     name: String,
     desc: String,
     no: Number, // 序号
-    icon_url: String
   },
   { timestamps: { createdAt: 'create_time', updatedAt: 'update_time' } }
 );

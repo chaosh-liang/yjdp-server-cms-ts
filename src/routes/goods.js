@@ -128,7 +128,7 @@ router.post('/add', async (ctx) => {
   let returnInfo = null;
 
   try {
-    const res = await Goods.create({
+    await Goods.create({
       name,
       desc,
       price,
