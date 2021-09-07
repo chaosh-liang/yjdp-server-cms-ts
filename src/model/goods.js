@@ -21,6 +21,8 @@ const schema = new Schema(
   { timestamps: { createdAt: 'create_time', updatedAt: 'update_time' } }
 );
 
+// model 名称须与数据库中的表明相同，不区分大小写。但是表名必须以 s 结尾
+// 如果 model 名称与表名不相同，则查不到数据，且不报错
 module.exports = model('goods', schema);
 
 /* {
