@@ -121,7 +121,13 @@ router.delete('/delete', async (ctx) => {
   let returnInfo = null;
 
   try {
-    // TODO: 判断其下是否含有系列，有则不能删除
+    // 判断其下是否含有系列，有则不能删除
+    const series_count = await Series.countDocuments({ category_id: id });
+    if (series_count !== 0) {
+      ctx.body = { error_code: 92, data: null, error_msg: '存在系列，不能删除' };
+      return;
+    }
+    
     const res = await Category.deleteOne({ _id: id });
     const { n, ok } = res;
     if (ok === 1 && n !== 0) {
@@ -153,7 +159,12 @@ router.delete('/s/delete', async (ctx) => {
   let returnInfo = null;
 
   try {
-    // TODO: 判断其下是否含有商品，有则不能删除
+    // 判断其下是否含有商品，有则不能删除
+    const goods_count = await Goods.countDocuments({ series_id: id });
+    if (goods_count !== 0) {
+      ctx.body = { error_code: 92, data: null, error_msg: '存在商品，不能删除' };
+      return;
+    }
     const res = await Series.deleteOne({ _id: id });
     const { n, ok } = res;
     if (ok === 1 && n !== 0) {

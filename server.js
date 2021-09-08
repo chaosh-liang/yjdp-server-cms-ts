@@ -4,6 +4,7 @@ const cors = require('@koa/cors');
 const router = require('@koa/router')();
 const mongoConf = require('./src/config/mongo');
 const koaBody = require('koa-body');
+const bodyParser = require('koa-bodyparser');
 const koaStatic = require('koa-static');
 const users = require('./src/routes/users');
 const goods = require('./src/routes/goods');
@@ -16,16 +17,7 @@ const upload_url = 'upload';
 mongoConf.connect();
 
 app.use(cors()); // 配置跨域
-// 上传文件配置
-app.use(
-  koaBody({
-    multipart: true, // 支持多个文件上传
-    formidable: {
-      uploadDir: path.join(__dirname, public_url, upload_url), // 设置上传目录
-      keepExtensions: true, // 保留文件后缀名
-    },
-  })
-);
+app.use(bodyParser());
 
 // 将 public_url 设置为静态文件目录，则可以直接读取目录下的文件
 // 而直接访问 public_url 目录，不可见
@@ -38,7 +30,13 @@ router.use('/goods', goods);
 router.use('/category', categories);
 
 // 上传图片
-router.post('/upload', async (ctx) => {
+router.post('/upload', koaBody({
+  multipart: true, // 支持多个文件上传
+  formidable: {
+    uploadDir: path.join(__dirname, public_url, upload_url), // 设置上传目录
+    keepExtensions: true, // 保留文件后缀名
+  },
+}), async (ctx) => {
   const {
     origin,
     request: {

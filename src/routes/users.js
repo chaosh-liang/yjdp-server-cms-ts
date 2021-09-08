@@ -7,8 +7,8 @@ router.get('/', async ctx => {
 
 router.get('/:id', async ctx => {
   const { request: { query, body: params } } = ctx; // 参数
-  console.log('query someone , params => ', params);
-  console.log('query someone , query => ', query);
+  // console.log('query someone , params => ', params);
+  // console.log('query someone , query => ', query);
   ctx.body = { error_code: '00', add: 'test query' }; //这里为什么可以返回
 });
 
