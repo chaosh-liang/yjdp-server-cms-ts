@@ -102,7 +102,7 @@ const clearUselessPicture = async () => {
   });
 };
 
-// 定时任务，设置清理日期和时间为： 每周日 00:00:10
+// 定时任务，日期和时间为： 每周日 00:00:10
 const job = schedule.scheduleJob(
   { hour: 0, minute: 0, second: 10, dayOfWeek: 0 },
   () => {
