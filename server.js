@@ -107,10 +107,12 @@ const job = schedule.scheduleJob(
   { hour: 0, minute: 0, second: 10, dayOfWeek: 0 },
   () => {
     const nextCron = job.nextInvocation(); // 返回下次的调用对象，如果被取消了，则返回 null
-    const {
-      _date: { ts },
-    } = nextCron;
-    console.log('下次清理日期和时间 => ', new Date(ts));
+    if (nextCron) {
+      const {
+        _date: { ts },
+      } = nextCron;
+      console.log('下次清理日期和时间 => ', new Date(ts));
+    }
     clearUselessPicture(); // 清理没用的图片
   }
 );
