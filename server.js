@@ -35,8 +35,10 @@ app.use(router.routes()).use(router.allowedMethods());
 // 定时任务：清理无用文件
 clearFileSchedule();
 
-const host = process.env.NODE_ENV === 'production' ? '101.34.21.222' : 'localhost'; // 区分生产和开发环境
+const host = process.env.NODE_ENV === 'development' ? 'localhost' : '101.34.21.222'; // 区分生产和开发环境
 const port = 7716;
+
+// console.log('host env => ', host, process.env.NODE_ENV);
 
 app.listen(port, () => {
   console.log(`Server running at http://${host}:${port}`);

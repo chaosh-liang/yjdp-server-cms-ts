@@ -6,6 +6,8 @@ const public_url = 'public';
 const upload_url = 'upload';
 const fileDirectory = path.join(__dirname, '../../', public_url, upload_url);
 
+const ip = process.env.NODE_ENV === 'development' ? 'localhost' : '101.34.21.222'; // 区分生产和开发环境
+
 // 上传图片
 router.post(
   '/',
@@ -18,7 +20,6 @@ router.post(
   }),
   async (ctx) => {
     const {
-      origin,
       request: {
         files: {
           picture: { path },
@@ -26,10 +27,11 @@ router.post(
       },
     } = ctx;
     const [filename] = path.match(/\upload_.+$/g);
-    // console.log('origin filename => ', origin, filename);
+    // console.log('ip filename => ', ip, filename);
     ctx.body = {
       error_code: '00',
-      data: { res: `${origin}/${upload_url}/${filename}` },
+      data: { res: `http://${ip}/${upload_url}/${filename}` },
+      env: process.env.NODE_ENV,
       error_msg: 'Success',
     };
   }
