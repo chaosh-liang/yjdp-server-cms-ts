@@ -38,6 +38,7 @@ router.get('/s/:id', async (ctx) => {
       name: 1,
       icon_url: 1,
       no: 1,
+      desc: 1,
       category_id: 1,
       create_time: 1,
       update_time: 1,
