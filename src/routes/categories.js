@@ -1,4 +1,5 @@
 const router = require('@koa/router')();
+const Goods = require('../model/goods');
 const Series = require('../model/series');
 const Category = require('../model/categories');
 const { ObjectId } = require('mongodb');

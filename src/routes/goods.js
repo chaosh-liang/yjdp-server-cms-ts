@@ -9,7 +9,9 @@ router.post('/', async (ctx) => {
       body: { page_size = 10, page_index = 1 },
     },
   } = ctx;
-  const total = await Goods.find().estimatedDocumentCount(); // 总是返回 collections 记录总数，与查询条件无关
+  // estimatedDocumentCount 返回 collections 记录总数
+  // 有过滤条件的话用这个：countDocuments，如 countDocuments({ series_id: id })
+  const total = await Goods.estimatedDocumentCount();
   const res = await Goods.aggregate() // 聚合，联表查询
     .lookup({
       from: 'categories',
@@ -53,7 +55,7 @@ router.post('/home/products', async (ctx) => {
       body: { page_index = 1, page_size = 10 },
     },
   } = ctx;
-  const total = await Goods.find({ home_display: true }).countDocuments();
+  const total = await Goods.countDocuments({ home_display: true });
   const res = await Goods.find({ home_display: true })
     .skip(page_size * (page_index - 1))
     .limit(page_size);
@@ -72,8 +74,8 @@ router.post('/series/:id', async (ctx) => {
       body: { page_index = 1, page_size = 10 },
     },
   } = ctx;
-  const total = await Goods.find({ series_id: ObjectId(id) }).countDocuments();
-  const res = await Goods.find({ series_id: ObjectId(id) })
+  const total = await Goods.countDocuments({ series_id: id });
+  const res = await Goods.find({ series_id: id })
     .skip(page_size * (page_index - 1))
     .limit(page_size);
   const lite = res.map((item) => ({

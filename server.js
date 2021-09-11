@@ -35,7 +35,10 @@ app.use(router.routes()).use(router.allowedMethods());
 // 定时任务：清理无用文件
 clearFileSchedule();
 
-const host = process.env.NODE_ENV === 'development' ? 'localhost' : '101.34.21.222'; // 区分生产和开发环境
+// @Note 在启动脚本命令设置环境变量（env.NODE_ENV）没作用
+// @Note 即使设置成功了，打印 process.env.NODE_ENV 为 production，但以下的三目运算符也是 false
+// @Note 但在 Linux 上用 pm2 管理服务，确设置成功了
+const host = process.env.NODE_ENV === 'production' ? '101.34.21.222' : 'localhost'; // 区分环境
 const port = 7716;
 
 // console.log('host env => ', host, process.env.NODE_ENV);

@@ -6,7 +6,8 @@ const public_url = 'public';
 const upload_url = 'upload';
 const fileDirectory = path.join(__dirname, '../../', public_url, upload_url);
 
-const ip = process.env.NODE_ENV === 'development' ? 'localhost' : '101.34.21.222'; // 区分生产和开发环境
+// @Note 见 server.js 中对应的说明
+const ip = process.env.NODE_ENV === 'production' ? '101.34.21.222' : 'localhost'; // 区分环境
 
 // 上传图片
 router.post(
