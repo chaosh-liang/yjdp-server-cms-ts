@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const schedule = require('node-schedule');
 const goodsModel = require('../model/goods');
+const seriesModel = require('../model/series');
 
 const public_url = 'public';
 const upload_url = 'upload';
@@ -9,36 +10,39 @@ const fileDirectory = path.join(__dirname, '../../', public_url, upload_url);
 
 // 清理没用的图片
 const clearUselessPicture = async () => {
-  const allGoods = await goodsModel.find({});
-  const dbPictureSet = new Set(
-    allGoods // 数据库中的所有图片
-      .map((goods) => {
-        const { icon_url, banner_url, desc_url } = goods;
-        const [icon_file_name] = icon_url.match(/(\w+)\.(png|jpe?g|webp)$/g);
-        const banner_file_name = banner_url
-          .filter((url) => url) // 把为空的过滤掉
-          .map((url) => url.match(/(\w+)\.(png|jpe?g|webp)$/g)) // 只要文件名
-          .flat(); // 拉平
-        const desc_file_name = desc_url
-          .filter((url) => url)
-          .map((url) => url.match(/(\w+)\.(png|jpe?g|webp)$/g))
-          .flat();
-        return [icon_file_name, ...banner_file_name, ...desc_file_name];
-      })
-      .flat()
-  );
+  const allGoods = await goodsModel.find();
+  const allSeries = await seriesModel.find();
+  const dbGoodsPicture = allGoods // 商品的图片
+    .map((goods) => {
+      const { icon_url, banner_url, desc_url } = goods;
+      const [, icon_file_name] = icon_url.match(/upload\/(.+)/);
+      const banner_file_name = banner_url
+        .filter((url) => url) // 把为空的过滤掉
+        .map((url) => url.match(/upload\/(.+)/)[1]) // 只要文件名
+        .flat(); // 拉平
+      const desc_file_name = desc_url
+        .filter((url) => url)
+        .map((url) => url.match(/upload\/(.+)/)[1])
+        .flat();
+      return [icon_file_name, ...banner_file_name, ...desc_file_name];
+    })
+    .flat();
+  const dbSeriesPicture = allSeries // 系列的图片
+    .map((series) => {
+      const { icon_url } = series;
+      const [, icon_file_name] = icon_url.match(/upload\/(.+)/);
+      return icon_file_name;
+    });
+  const dbPictureSet = new Set([...dbGoodsPicture, ...dbSeriesPicture]);
   // console.log('dbPictureSet => ', dbPictureSet);
   fs.readdir(fileDirectory, (error, files) => {
     if (error) throw error;
     // console.log('files => ', files);
     const redundantFiles = files.filter((file) => !dbPictureSet.has(file)); // 多余的文件
     redundantFiles.forEach((file) => {
-      fs.unlinkSync(
-        path.join(fileDirectory, file),
-        (error) => {
-          if (error) console.log('删除文件失败：', file);
-        }
-      );
+      fs.unlinkSync(path.join(fileDirectory, file), (error) => {
+        if (error) console.log('删除文件失败：', file);
+      });
     });
   });
 };
