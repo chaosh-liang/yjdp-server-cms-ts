@@ -4,9 +4,13 @@ const schedule = require('node-schedule');
 const goodsModel = require('../model/goods');
 const seriesModel = require('../model/series');
 
-const public_url = 'public';
+const public_url = 'dadudu_public';
 const upload_url = 'upload';
-const fileDirectory = path.join(__dirname, '../../', public_url, upload_url);
+let fileDirectory = path.resolve(`D:\\${public_url}\\${upload_url}`);
+
+if (process.env.NODE_ENV === 'production') {
+  fileDirectory = path.resolve(`/opt/material/server/${public_url}/${upload_url}`);
+}
 
 // 清理没用的图片
 const clearUselessPicture = async () => {
@@ -48,9 +52,9 @@ const clearUselessPicture = async () => {
 };
 
 const clearFileSchedule = () => {
-  // 定时任务，日期和时间为： 每周日 00:00:10
+  // 定时任务，日期和时间为： 每周一 01:00:00
   const job = schedule.scheduleJob(
-    { hour: 0, minute: 0, second: 10, dayOfWeek: 0 },
+    { hour: 1, minute: 0, second: 0, dayOfWeek: 1 },
     () => {
       /* // FIXME: 调试用
       const nextCron = job.nextInvocation(); // 返回下次的调用对象，如果被取消了，则返回 null

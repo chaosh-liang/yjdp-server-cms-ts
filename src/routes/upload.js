@@ -2,12 +2,17 @@ const path = require('path');
 const koaBody = require('koa-body');
 const router = require('@koa/router')();
 
-const public_url = 'public';
+const public_url = 'dadudu_public';
 const upload_url = 'upload';
-const fileDirectory = path.join(__dirname, '../../', public_url, upload_url);
+let fileDirectory = `D:\\${public_url}\\${upload_url}`;
 
-// @Note 见 server.js 中对应的说明
-const ip = process.env.NODE_ENV === 'production' ? '101.34.21.222' : 'localhost'; // 区分环境
+// @Description 见 server.js 中对应的说明
+let ip = 'localhost:7716'; // 区分环境
+
+if (process.env.NODE_ENV === 'production') {
+  ip = '101.34.21.222';
+  fileDirectory = `/opt/material/server/${public_url}/${upload_url}`;
+}
 
 // 上传图片
 router.post(
@@ -15,7 +20,7 @@ router.post(
   koaBody({
     multipart: true, // 支持多个文件上传
     formidable: {
-      uploadDir: fileDirectory, // 设置上传目录
+      uploadDir: path.resolve(fileDirectory), // 设置上传目录
       keepExtensions: true, // 保留文件后缀名
     },
   }),
