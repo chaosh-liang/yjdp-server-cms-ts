@@ -4,12 +4,12 @@ const schedule = require('node-schedule');
 const goodsModel = require('../model/goods');
 const seriesModel = require('../model/series');
 
-const public_url = 'dadudu_public';
-const upload_url = 'upload';
-let fileDirectory = path.resolve(`D:\\${public_url}\\${upload_url}`);
+const PUBLIC_URL = 'dadudu_public';
+const UPLOAD_URL = 'upload';
+let fileDirectory = path.resolve(`D:\\${PUBLIC_URL}\\${UPLOAD_URL}`);
 
 if (process.env.NODE_ENV === 'production') {
-  fileDirectory = path.resolve(`/opt/material/server/${public_url}/${upload_url}`);
+  fileDirectory = path.resolve(`/opt/material/server/${PUBLIC_URL}/${UPLOAD_URL}`);
 }
 
 // 清理没用的图片

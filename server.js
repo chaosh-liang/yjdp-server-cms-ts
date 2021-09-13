@@ -3,7 +3,7 @@
  * @Email: broli.up.up.up@gmail.com
  * @Date: 2021-08-15 22:00:36
  * @LastEditors: Broli
- * @LastEditTime: 2021-09-12 23:37:27
+ * @LastEditTime: 2021-09-13 20:08:58
  * @Description: 图片目录：开发环境（本地）D:\dadudu_public\upload，不存在则新建
  * @Description: 图片目录：生产环境（线上）/opt/material/server/dadudu_public/upload，不存在则新建
  */
@@ -15,6 +15,7 @@ const cors = require('@koa/cors');
 const router = require('@koa/router')();
 const bodyParser = require('koa-bodyparser');
 const koaStatic = require('koa-static');
+const koaSession = require('koa-session');
 const mongoConf = require('./src/config/mongo');
 const users = require('./src/routes/users');
 const goods = require('./src/routes/goods');
@@ -23,10 +24,12 @@ const upload = require('./src/routes/upload');
 const { clearFileSchedule } = require('./src/service/schedule');
 
 const app = new Koa();
-const public_url = 'dadudu_public';
-const upload_url = 'upload';
-let publicAbsoluteDir = `D:\\${public_url}`;
-let uploadAbsoluteDir = `D:\\${public_url}\\${upload_url}`;
+app.keys = ['REFEVURVX1NFUlZFUl9DTVM=']; // base64: DADUDU_SERVER_CMS
+const PUBLIC_URL = 'dadudu_public';
+const UPLOAD_URL = 'upload';
+const ROUTER_PREFIX = '/dadudu/api';
+let publicAbsoluteDir = `D:\\${PUBLIC_URL}`;
+let uploadAbsoluteDir = `D:\\${PUBLIC_URL}\\${UPLOAD_URL}`;
 
 /**
  * @Description 在启动脚本命令设置环境变量（env.NODE_ENV）没作用
@@ -39,8 +42,8 @@ const port = 7716;
 
 if (process.env.NODE_ENV === 'production') {
   host = '101.34.21.222';
-  publicAbsoluteDir = `/opt/material/server/${public_url}`;
-  uploadAbsoluteDir = `/opt/material/server/${public_url}/${upload_url}`;
+  publicAbsoluteDir = `/opt/material/server/${PUBLIC_URL}`;
+  uploadAbsoluteDir = `/opt/material/server/${PUBLIC_URL}/${UPLOAD_URL}`;
 }
 
 // console.log('host env => ', host, process.env.NODE_ENV);
@@ -59,14 +62,42 @@ mongoConf.connect();
 
 app.use(cors()); // 配置跨域
 app.use(bodyParser());
+app.use(
+  // session
+  koaSession(
+    {
+      maxAge: 24 * 60 * 60 * 1000,
+      httpOnly: true,
+      signed: true,
+      rolling: true,
+    },
+    app
+  )
+);
 
-// 将 public_url 设置为静态文件目录，则可以直接读取目录下的文件
-// 而直接访问 public_url 目录，不可见
+// 将 PUBLIC_URL 设置为静态文件目录，则可以直接读取目录下的文件
+// 而直接访问 PUBLIC_URL 目录，不可见
 app.use(koaStatic(path_publicAbsoluteDir));
 
-router.prefix('/dadudu/api'); // 设置前缀
+router.prefix(ROUTER_PREFIX); // 设置前缀
 
-router.use('/user', users);
+// 设置接口鉴定 session
+app.use((ctx) => {
+  // ignore login
+  const {
+    path,
+    session: { isNew },
+  } = ctx;
+  if (
+    path.startsWith(ROUTER_PREFIX) &&
+    path !== `${ROUTER_PREFIX}/author/login` &&
+    isNew
+  ) {
+    ctx.response.status = 401;
+  }
+});
+
+router.use('/author', users);
 router.use('/goods', goods);
 router.use('/category', categories);
 router.use('/upload', upload);
