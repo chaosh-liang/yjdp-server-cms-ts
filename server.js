@@ -3,7 +3,7 @@
  * @Email: broli.up.up.up@gmail.com
  * @Date: 2021-08-15 22:00:36
  * @LastEditors: Broli
- * @LastEditTime: 2021-09-13 20:08:58
+ * @LastEditTime: 2021-09-14 00:11:38
  * @Description: 图片目录：开发环境（本地）D:\dadudu_public\upload，不存在则新建
  * @Description: 图片目录：生产环境（线上）/opt/material/server/dadudu_public/upload，不存在则新建
  */
@@ -21,6 +21,7 @@ const users = require('./src/routes/users');
 const goods = require('./src/routes/goods');
 const categories = require('./src/routes/categories');
 const upload = require('./src/routes/upload');
+const loggedCheck = require('./src/middleware/logged_check');
 const { clearFileSchedule } = require('./src/service/schedule');
 
 const app = new Koa();
@@ -63,13 +64,15 @@ mongoConf.connect();
 app.use(cors()); // 配置跨域
 app.use(bodyParser());
 app.use(
-  // session
+  // session 配置
   koaSession(
     {
-      maxAge: 24 * 60 * 60 * 1000,
+      // maxAge: 24 * 60 * 60 * 1000, // TODO: dev
+      maxAge: 3 * 60 * 1000,
       httpOnly: true,
       signed: true,
       rolling: true,
+      secure: false,
     },
     app
   )
@@ -81,26 +84,10 @@ app.use(koaStatic(path_publicAbsoluteDir));
 
 router.prefix(ROUTER_PREFIX); // 设置前缀
 
-// 设置接口鉴定 session
-app.use((ctx) => {
-  // ignore login
-  const {
-    path,
-    session: { isNew },
-  } = ctx;
-  if (
-    path.startsWith(ROUTER_PREFIX) &&
-    path !== `${ROUTER_PREFIX}/author/login` &&
-    isNew
-  ) {
-    ctx.response.status = 401;
-  }
-});
-
 router.use('/author', users);
-router.use('/goods', goods);
-router.use('/category', categories);
-router.use('/upload', upload);
+router.use('/goods', loggedCheck, goods);
+router.use('/category', loggedCheck, categories);
+router.use('/upload', loggedCheck, upload);
 
 app.use(router.routes()).use(router.allowedMethods());
 
