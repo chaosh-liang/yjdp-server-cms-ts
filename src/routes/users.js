@@ -1,6 +1,7 @@
 const router = require('@koa/router')();
 const Users = require('../model/users');
 
+// 登录
 router.post('/login', async (ctx) => {
   const {
     request: {
@@ -26,9 +27,20 @@ router.post('/login', async (ctx) => {
   }
 });
 
+// 注销
 router.get('/logout', async (ctx) => {
   ctx.session = null;
   ctx.body = { error_code: '00', data: null, error_msg: '退出成功' };
+});
+
+// 判断 session 是否有效
+router.get('/check', async (ctx) => {
+  const { session: { isNew } } = ctx;
+  if (isNew) {
+    ctx.body = { error_code: '00', data: { res: { online: false } }, error_msg: 'no' };
+  } else {
+    ctx.body = { error_code: '00', data: { res: { online: true } }, error_msg: 'ok' };
+  }
 });
 
 module.exports = router.routes();
