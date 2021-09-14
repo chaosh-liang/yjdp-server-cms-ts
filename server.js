@@ -3,7 +3,7 @@
  * @Email: broli.up.up.up@gmail.com
  * @Date: 2021-08-15 22:00:36
  * @LastEditors: Broli
- * @LastEditTime: 2021-09-14 00:11:38
+ * @LastEditTime: 2021-09-14 15:05:54
  * @Description: 图片目录：开发环境（本地）D:\dadudu_public\upload，不存在则新建
  * @Description: 图片目录：生产环境（线上）/opt/material/server/dadudu_public/upload，不存在则新建
  */
@@ -47,8 +47,6 @@ if (process.env.NODE_ENV === 'production') {
   uploadAbsoluteDir = `/opt/material/server/${PUBLIC_URL}/${UPLOAD_URL}`;
 }
 
-// console.log('host env => ', host, process.env.NODE_ENV);
-
 // 判断嵌套的路径，须逐层判断和新建
 const path_publicAbsoluteDir = path.resolve(publicAbsoluteDir);
 const path_uploadAbsoluteDir = path.resolve(uploadAbsoluteDir);
@@ -61,14 +59,14 @@ if (!isExistUploadDir) fs.mkdirSync(path_uploadAbsoluteDir);
 
 mongoConf.connect();
 
-app.use(cors()); // 配置跨域
+app.use(cors({ credentials: true })); // 配置跨域。需要携带 cookie，前端接口也须设置 credentials
 app.use(bodyParser());
 app.use(
   // session 配置
   koaSession(
     {
       // maxAge: 24 * 60 * 60 * 1000, // TODO: dev
-      maxAge: 3 * 60 * 1000,
+      maxAge: 10 * 60 * 1000,
       httpOnly: true,
       signed: true,
       rolling: true,
@@ -86,8 +84,8 @@ router.prefix(ROUTER_PREFIX); // 设置前缀
 
 router.use('/author', users);
 router.use('/goods', loggedCheck, goods);
-router.use('/category', loggedCheck, categories);
 router.use('/upload', loggedCheck, upload);
+router.use('/category', loggedCheck, categories);
 
 app.use(router.routes()).use(router.allowedMethods());
 

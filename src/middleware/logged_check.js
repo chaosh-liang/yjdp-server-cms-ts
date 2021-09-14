@@ -1,5 +1,4 @@
-
-module.exports = ctx => {
+module.exports = async (ctx, done) => {
   // ignore login
   const {
     path,
@@ -7,4 +6,5 @@ module.exports = ctx => {
   } = ctx;
   // console.log('path => ', path);
   if (isNew) ctx.response.status = 401;
-}
+  await done();
+};
