@@ -3,7 +3,7 @@
  * @Email: broli.up.up.up@gmail.com
  * @Date: 2021-08-15 22:00:36
  * @LastEditors: Broli
- * @LastEditTime: 2021-09-14 18:37:39
+ * @LastEditTime: 2021-09-16 01:39:43
  * @Description: 图片目录：开发环境（本地）D:\dadudu_public\upload，不存在则新建
  * @Description: 图片目录：生产环境（线上）/opt/material/server/dadudu_public/upload，不存在则新建
  */
@@ -66,11 +66,11 @@ app.use(
   koaSession(
     {
       // maxAge: 24 * 60 * 60 * 1000, // TODO: dev
-      maxAge: 2 * 60 * 1000,
+      maxAge: 10 * 60 * 1000,
       httpOnly: true,
       signed: true,
       rolling: true,
-      secure: false,
+      secure: false
     },
     app
   )

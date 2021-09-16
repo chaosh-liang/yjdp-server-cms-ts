@@ -16,7 +16,6 @@ router.post('/login', async (ctx) => {
     } else if (res) {
       let n = ctx.session.views || 0;
       ctx.session.views = n++;
-      ctx.cookies.set(); // 必须设置，才能写入浏览器 cookie 里
       ctx.body = { error_code: '00', data: null, error_msg: '登录成功' };
       ctx.response.status = 200;
     } else {
