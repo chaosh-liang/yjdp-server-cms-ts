@@ -3,7 +3,7 @@
  * @Email: broli.up.up.up@gmail.com
  * @Date: 2021-09-10 10:53:27
  * @LastEditors: Broli
- * @LastEditTime: 2021-09-17 18:11:37
+ * @LastEditTime: 2021-09-17 19:32:32
  * @Description: pm2 的配置文件
  * @Description: 静态文件目录：开发环境（本地）D:\dadudu_public\upload
  * @Description: 静态文件目录：生产环境（线上）/opt/material/server/dadudu_public/upload
@@ -47,10 +47,10 @@ module.exports = {
     },
     {
       name: 'dadudu_server_cms', // name 不要随意修改，如需修改，请同步修改脚本文件（.bin）
-      script: './server.js',
+      script: path.join(__dirname, './server.js'),
       watch: true,
       ignore_watch: ['node_modules'],
-      env_development: {
+      env: {
         NODE_ENV: 'development',
       },
       env_production: {
