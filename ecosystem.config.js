@@ -3,7 +3,7 @@
  * @Email: broli.up.up.up@gmail.com
  * @Date: 2021-09-10 10:53:27
  * @LastEditors: Broli
- * @LastEditTime: 2021-09-17 19:32:32
+ * @LastEditTime: 2021-09-17 20:43:12
  * @Description: pm2 的配置文件
  * @Description: 静态文件目录：开发环境（本地）D:\dadudu_public\upload
  * @Description: 静态文件目录：生产环境（线上）/opt/material/server/dadudu_public/upload
@@ -21,7 +21,7 @@ const UPLOAD_URL = 'upload';
 let publicAbsoluteDir = `D:\\${PUBLIC_URL}`;
 let uploadAbsoluteDir = `D:\\${PUBLIC_URL}\\${UPLOAD_URL}`;
 
-if (process.env.NODE_ENV === 'production') {
+if (process.env.ENV_USER_NV === 'pro') {
   publicAbsoluteDir = `/opt/material/server/${PUBLIC_URL}`;
   uploadAbsoluteDir = `/opt/material/server/${PUBLIC_URL}/${UPLOAD_URL}`;
 }
@@ -43,6 +43,9 @@ module.exports = {
       env: {
         PM2_SERVE_PATH: path_publicAbsoluteDir, // 将 PUBLIC_URL 设置为静态文件目录，则可以直接读取目录下的文件。但直接访问 PUBLIC_URL 目录，不可见
         PM2_SERVE_PORT: 7715,
+      },
+      env_production: {
+        NODE_ENV: 'production',
       },
     },
     {
