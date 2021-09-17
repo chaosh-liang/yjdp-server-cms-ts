@@ -3,7 +3,7 @@
  * @Email: broli.up.up.up@gmail.com
  * @Date: 2021-09-10 10:53:27
  * @LastEditors: Broli
- * @LastEditTime: 2021-09-17 12:21:14
+ * @LastEditTime: 2021-09-17 18:11:37
  * @Description: pm2 的配置文件
  * @Description: 静态文件目录：开发环境（本地）D:\dadudu_public\upload
  * @Description: 静态文件目录：生产环境（线上）/opt/material/server/dadudu_public/upload
@@ -38,7 +38,7 @@ if (!fs.existsSync(path_uploadAbsoluteDir))
 module.exports = {
   apps: [
     {
-      name: 'file_server',
+      name: 'file_server', // name 不要随意修改，如需修改，请同步修改脚本文件（.bin）
       script: 'serve',
       env: {
         PM2_SERVE_PATH: path_publicAbsoluteDir, // 将 PUBLIC_URL 设置为静态文件目录，则可以直接读取目录下的文件。但直接访问 PUBLIC_URL 目录，不可见
@@ -46,7 +46,7 @@ module.exports = {
       },
     },
     {
-      name: 'dadudu_server_cms',
+      name: 'dadudu_server_cms', // name 不要随意修改，如需修改，请同步修改脚本文件（.bin）
       script: './server.js',
       watch: true,
       ignore_watch: ['node_modules'],
