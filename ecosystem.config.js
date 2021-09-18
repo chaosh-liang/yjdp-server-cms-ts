@@ -3,7 +3,7 @@
  * @Email: broli.up.up.up@gmail.com
  * @Date: 2021-09-10 10:53:27
  * @LastEditors: Broli
- * @LastEditTime: 2021-09-17 20:43:12
+ * @LastEditTime: 2021-09-18 11:32:34
  * @Description: pm2 的配置文件
  * @Description: 静态文件目录：开发环境（本地）D:\dadudu_public\upload
  * @Description: 静态文件目录：生产环境（线上）/opt/material/server/dadudu_public/upload
@@ -11,21 +11,32 @@
  * @Description: 启动服务：生产环境（须指定参数 --env production） => pm2 start ecosystem.config.js --env production
  */
 
+const os = require('os');
 const fs = require('fs');
 const path = require('path');
 
 const PUBLIC_URL = 'dadudu_public';
 const UPLOAD_URL = 'upload';
 
-// 默认本地路径
-let publicAbsoluteDir = `D:\\${PUBLIC_URL}`;
-let uploadAbsoluteDir = `D:\\${PUBLIC_URL}\\${UPLOAD_URL}`;
+// 路径，区分静态文件服务的目录
+let publicAbsoluteDir = '';
+let uploadAbsoluteDir = '';
 
-if (process.env.ENV_USER_NV === 'pro') {
-  publicAbsoluteDir = `/opt/material/server/${PUBLIC_URL}`;
-  uploadAbsoluteDir = `/opt/material/server/${PUBLIC_URL}/${UPLOAD_URL}`;
+switch (os.platform()) {
+  case 'win32': // Windows
+    publicAbsoluteDir = `D:\\${PUBLIC_URL}`;
+    uploadAbsoluteDir = `D:\\${PUBLIC_URL}\\${UPLOAD_URL}`;
+    break;
+  case 'darwin': // Mac
+    publicAbsoluteDir = `/opt/${PUBLIC_URL}`;
+    uploadAbsoluteDir = `/opt/${PUBLIC_URL}/${UPLOAD_URL}`;
+  case 'linux': // Linux
+    publicAbsoluteDir = `/opt/material/server/${PUBLIC_URL}`;
+    uploadAbsoluteDir = `/opt/material/server/${PUBLIC_URL}/${UPLOAD_URL}`;
+  // no default
 }
 
+// 取绝对路径
 const path_publicAbsoluteDir = path.resolve(publicAbsoluteDir);
 const path_uploadAbsoluteDir = path.resolve(uploadAbsoluteDir);
 
