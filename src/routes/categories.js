@@ -25,7 +25,7 @@ router.get('/s/:id', async (ctx) => {
     },
   } = ctx;
   const res = await Series.aggregate() // 聚合
-    .match({ category_id: ObjectId(id) }) // 查询条件
+    .match({ category_id: ObjectId(id) }) // 聚合查询中，ObjectId 的格式：ObjectId(id)
     .lookup({
       // 联表查询
       from: 'goods',

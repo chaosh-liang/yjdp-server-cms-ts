@@ -100,7 +100,7 @@ router.get('/detail/:id', async (ctx) => {
       params: { id },
     },
   } = ctx;
-  const res = await Goods.findOne({ _id: ObjectId(id) });
+  const res = await Goods.findOne({ _id: id });
   ctx.body = { error_code: '00', data: { res }, error_msg: 'Success' };
 });
 
