@@ -11,4 +11,4 @@ const schema = new Schema(
   { timestamps: { createdAt: 'create_time', updatedAt: 'update_time' } }
 );
 
-module.exports = model('users', schema);
+module.exports = model('cmsusers', schema);

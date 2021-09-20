@@ -1,5 +1,5 @@
 const router = require('@koa/router')();
-const Goods = require('../model/goods');
+const goodsModel = require('../model/goods');
 const { ObjectId } = require('mongodb');
 
 // 获取所有的商品-分页
@@ -11,8 +11,8 @@ router.post('/', async (ctx) => {
   } = ctx;
   // estimatedDocumentCount 返回 collections 记录总数
   // 有过滤条件的话用这个：countDocuments，如 countDocuments({ series_id: id })
-  const total = await Goods.estimatedDocumentCount();
-  const res = await Goods.aggregate() // 聚合，联表查询
+  const total = await goodsModel.estimatedDocumentCount();
+  const res = await goodsModel.aggregate() // 聚合，联表查询
     .lookup({
       from: 'categories',
       localField: 'category_id',
@@ -37,7 +37,7 @@ router.post('/', async (ctx) => {
 
 // 主页的轮播图
 router.get('/home/banner', async (ctx) => {
-  const res = await Goods.find({ home_banner: true });
+  const res = await goodsModel.find({ home_banner: true });
   const banners = res.map((item) => {
     return {
       _id: item._id,
@@ -55,8 +55,8 @@ router.post('/home/products', async (ctx) => {
       body: { page_index = 1, page_size = 10 },
     },
   } = ctx;
-  const total = await Goods.countDocuments({ home_display: true });
-  const res = await Goods.find({ home_display: true })
+  const total = await goodsModel.countDocuments({ home_display: true });
+  const res = await goodsModel.find({ home_display: true })
     .skip(page_size * (page_index - 1))
     .limit(page_size);
   ctx.body = {
@@ -74,8 +74,8 @@ router.post('/series/:id', async (ctx) => {
       body: { page_index = 1, page_size = 10 },
     },
   } = ctx;
-  const total = await Goods.countDocuments({ series_id: id });
-  const res = await Goods.find({ series_id: id })
+  const total = await goodsModel.countDocuments({ series_id: id });
+  const res = await goodsModel.find({ series_id: id })
     .skip(page_size * (page_index - 1))
     .limit(page_size);
   const lite = res.map((item) => ({
@@ -100,7 +100,7 @@ router.get('/detail/:id', async (ctx) => {
       params: { id },
     },
   } = ctx;
-  const res = await Goods.findOne({ _id: id });
+  const res = await goodsModel.findOne({ _id: id });
   ctx.body = { error_code: '00', data: { res }, error_msg: 'Success' };
 });
 
@@ -130,7 +130,7 @@ router.post('/add', async (ctx) => {
   let returnInfo = null;
 
   try {
-    await Goods.create({
+    await goodsModel.create({
       name,
       desc,
       price,
@@ -176,7 +176,7 @@ router.put('/update', async (ctx) => {
   if (Reflect.has(params, 'category_id')) { params.category_id = ObjectId(params.category_id); }
 
   try {
-    const res = await Goods.updateOne({ _id }, { ...params });
+    const res = await goodsModel.updateOne({ _id }, { ...params });
     if (res.nModified === 1) {
       returnInfo = { error_code: '00', data: null, error_msg: 'Success' };
     } else {
@@ -206,7 +206,7 @@ router.delete('/delete', async (ctx) => {
   let returnInfo = null;
 
   try {
-    const res = await Goods.deleteMany({ _id: { $in: ids } });
+    const res = await goodsModel.deleteMany({ _id: { $in: ids } });
     const { n, ok } = res;
     if (ok === 1 && n !== 0) {
       returnInfo = { error_code: '00', data: null, error_msg: 'Success' };

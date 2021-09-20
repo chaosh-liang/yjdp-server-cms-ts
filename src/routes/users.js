@@ -1,5 +1,5 @@
 const router = require('@koa/router')();
-const Users = require('../model/users');
+const userModel = require('../model/users');
 
 // 登录
 router.post('/login', async (ctx) => {
@@ -9,8 +9,8 @@ router.post('/login', async (ctx) => {
     },
   } = ctx; // 参数
   try {
-    const accountRes = await Users.findOne({ user_name });
-    const res = await Users.findOne({ user_name, password });
+    const accountRes = await userModel.findOne({ user_name });
+    const res = await userModel.findOne({ user_name, password });
     if (!accountRes) {
       ctx.body = { error_code: '92', data: null, error_msg: '帐号不存在' };
     } else if (res) {

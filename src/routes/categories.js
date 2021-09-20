@@ -1,12 +1,12 @@
 const router = require('@koa/router')();
-const Goods = require('../model/goods');
-const Series = require('../model/series');
-const Category = require('../model/categories');
+const goodsModel = require('../model/goods');
+const seriesModel = require('../model/series');
+const categoryModel = require('../model/categories');
 const { ObjectId } = require('mongodb');
 
 // 查找：所有类别（左侧菜单）
 router.get('/', async (ctx) => {
-  const res = await Category.aggregate()
+  const res = await categoryModel.aggregate()
     .lookup({
       from: 'series',
       localField: '_id',
@@ -24,7 +24,7 @@ router.get('/s/:id', async (ctx) => {
       params: { id },
     },
   } = ctx;
-  const res = await Series.aggregate() // 聚合
+  const res = await seriesModel.aggregate() // 聚合
     .match({ category_id: ObjectId(id) }) // 聚合查询中，ObjectId 的格式：ObjectId(id)
     .lookup({
       // 联表查询
@@ -67,7 +67,7 @@ router.post('/add', async (ctx) => {
   let returnInfo = null;
 
   try {
-    await Category.create({
+    await categoryModel.create({
       name,
       desc,
       no,
@@ -91,7 +91,7 @@ router.post('/s/add', async (ctx) => {
   let returnInfo = null;
 
   try {
-    await Series.create({
+    await seriesModel.create({
       name,
       desc,
       no,
@@ -124,13 +124,13 @@ router.delete('/delete', async (ctx) => {
 
   try {
     // 判断其下是否含有系列，有则不能删除
-    const series_count = await Series.countDocuments({ category_id: id });
+    const series_count = await seriesModel.countDocuments({ category_id: id });
     if (series_count !== 0) {
       ctx.body = { error_code: 92, data: null, error_msg: '存在系列，不能删除' };
       return;
     }
     
-    const res = await Category.deleteOne({ _id: id });
+    const res = await categoryModel.deleteOne({ _id: id });
     const { n, ok } = res;
     if (ok === 1 && n !== 0) {
       returnInfo = { error_code: '00', data: null, error_msg: 'Success' };
@@ -162,12 +162,12 @@ router.delete('/s/delete', async (ctx) => {
 
   try {
     // 判断其下是否含有商品，有则不能删除
-    const goods_count = await Goods.countDocuments({ series_id: id });
+    const goods_count = await goodsModel.countDocuments({ series_id: id });
     if (goods_count !== 0) {
       ctx.body = { error_code: 92, data: null, error_msg: '存在商品，不能删除' };
       return;
     }
-    const res = await Series.deleteOne({ _id: id });
+    const res = await seriesModel.deleteOne({ _id: id });
     const { n, ok } = res;
     if (ok === 1 && n !== 0) {
       returnInfo = { error_code: '00', data: null, error_msg: 'Success' };
@@ -201,7 +201,7 @@ router.put('/update', async (ctx) => {
   Reflect.deleteProperty(params, '_id'); // 去掉第一层的 _id 字段，因为 _id 不需要设置
 
   try {
-    const res = await Category.updateOne({ _id }, { ...params });
+    const res = await categoryModel.updateOne({ _id }, { ...params });
     if (res.nModified === 1) {
       returnInfo = { error_code: '00', data: null, error_msg: 'Success' };
     } else {
@@ -237,7 +237,7 @@ router.put('/s/update', async (ctx) => {
   }
 
   try {
-    const res = await Series.updateOne({ _id }, { ...params });
+    const res = await seriesModel.updateOne({ _id }, { ...params });
     if (res.nModified === 1) {
       returnInfo = { error_code: '00', data: null, error_msg: 'Success' };
     } else {
