@@ -3,7 +3,7 @@
  * @Email: broli.up.up.up@gmail.com
  * @Date: 2021-08-15 22:00:36
  * @LastEditors: Broli
- * @LastEditTime: 2021-09-17 12:22:49
+ * @LastEditTime: 2021-09-21 15:59:42
  * @Description: 查看日志：pm2 logs process_name|process_id
  */
 
@@ -13,7 +13,7 @@ const router = require('@koa/router')();
 const bodyParser = require('koa-bodyparser');
 const koaSession = require('koa-session');
 const mongoConf = require('./src/config/mongo');
-const users = require('./src/routes/users');
+const author = require('./src/routes/author');
 const goods = require('./src/routes/goods');
 const categories = require('./src/routes/categories');
 const upload = require('./src/routes/upload');
@@ -32,8 +32,7 @@ app.use(
   // session 配置
   koaSession(
     {
-      // maxAge: 24 * 60 * 60 * 1000, // TODO: dev
-      maxAge: 10 * 60 * 1000,
+      maxAge: 24 * 60 * 60 * 1000, // 单位：ms
       httpOnly: true,
       signed: true,
       rolling: true,
@@ -45,7 +44,7 @@ app.use(
 
 router.prefix(ROUTER_PREFIX); // 设置前缀
 
-router.use('/author', users);
+router.use('/author', author);
 router.use('/goods', loggedCheck, goods);
 router.use('/upload', loggedCheck, upload);
 router.use('/category', loggedCheck, categories);

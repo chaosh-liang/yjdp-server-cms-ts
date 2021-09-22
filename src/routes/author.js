@@ -1,5 +1,5 @@
 const router = require('@koa/router')();
-const userModel = require('../model/users');
+const userModel = require('../model/author');
 
 // 登录
 router.post('/login', async (ctx) => {
