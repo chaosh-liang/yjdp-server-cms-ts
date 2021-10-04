@@ -9,10 +9,10 @@ router.post('/', async (ctx) => {
       body: { page_size = 10, page_index = 1 },
     },
   } = ctx;
-  // estimatedDocumentCount 返回 collections 记录总数
-  // 有过滤条件的话用这个：countDocuments，如 countDocuments({ series_id: id })
-  const total = await goodsModel.estimatedDocumentCount();
-  const res = await goodsModel.aggregate() // 聚合，联表查询
+  const total = await goodsModel.countDocuments({ deleted: 0 });
+  const res = await goodsModel
+    .aggregate() // 聚合，联表查询
+    .match({ deleted: 0 })
     .lookup({
       from: 'categories',
       localField: 'category_id',
@@ -25,7 +25,7 @@ router.post('/', async (ctx) => {
       foreignField: '_id',
       as: 'series_data',
     })
-    .sort({ update_time: -1, create_time: -1, _id: -1 })
+    .sort({ update_time: -1 })
     .skip(page_size * (page_index - 1))
     .limit(page_size);
   ctx.body = {
@@ -35,28 +35,17 @@ router.post('/', async (ctx) => {
   };
 });
 
-// 主页的轮播图
-router.get('/home/banner', async (ctx) => {
-  const res = await goodsModel.find({ home_banner: true });
-  const banners = res.map((item) => {
-    return {
-      _id: item._id,
-      name: item.name,
-      path: item.banner_url[0], // 拿第一张图
-    };
-  });
-  ctx.body = { error_code: '00', data: { res: banners }, error_msg: 'Success' };
-});
-
-// 主页的商品
-router.post('/home/products', async (ctx) => {
+// 获取所有失效的商品-分页
+router.post('/expired', async (ctx) => {
   const {
     request: {
-      body: { page_index = 1, page_size = 10 },
+      body: { page_size = 10, page_index = 1 },
     },
   } = ctx;
-  const total = await goodsModel.countDocuments({ home_display: true });
-  const res = await goodsModel.find({ home_display: true })
+  const total = await goodsModel.countDocuments({ deleted: 1 });
+  const res = await goodsModel
+    .find({ deleted: 1 })
+    .sort({ update_time: -1 })
     .skip(page_size * (page_index - 1))
     .limit(page_size);
   ctx.body = {
@@ -64,44 +53,6 @@ router.post('/home/products', async (ctx) => {
     data: { res, total, page_index, page_size },
     error_msg: 'Success',
   };
-});
-
-// 某系列下的商品列表
-router.post('/series/:id', async (ctx) => {
-  const {
-    request: {
-      params: { id },
-      body: { page_index = 1, page_size = 10 },
-    },
-  } = ctx;
-  const total = await goodsModel.countDocuments({ series_id: id });
-  const res = await goodsModel.find({ series_id: id })
-    .skip(page_size * (page_index - 1))
-    .limit(page_size);
-  const lite = res.map((item) => ({
-    _id: item._id,
-    icon_url: item.icon_url,
-    name: item.name,
-    price: item.price,
-    desc: item.desc,
-    currency_unit: item.currency_unit,
-  }));
-  ctx.body = {
-    error_code: '00',
-    data: { res: lite, total, page_index, page_size },
-    error_msg: 'Success',
-  };
-});
-
-// 商品详情
-router.get('/detail/:id', async (ctx) => {
-  const {
-    request: {
-      params: { id },
-    },
-  } = ctx;
-  const res = await goodsModel.findOne({ _id: id });
-  ctx.body = { error_code: '00', data: { res }, error_msg: 'Success' };
 });
 
 // 添加商品
@@ -136,6 +87,7 @@ router.post('/add', async (ctx) => {
       price,
       icon_url,
       desc_url,
+      deleted: 0,
       banner_url,
       count_unit,
       home_banner,
@@ -148,6 +100,7 @@ router.post('/add', async (ctx) => {
     });
     returnInfo = { error_code: '00', data: null, error_msg: 'Success' };
   } catch (error) {
+    console.log('/goods/add error => ', error);
     returnInfo = { error_code: 500, data: null, error_msg: error };
   }
 
@@ -172,17 +125,18 @@ router.put('/update', async (ctx) => {
   let returnInfo = null;
 
   Reflect.deleteProperty(params, '_id'); // 去掉第一层的 _id 字段，因为 _id 不需要设置
-  if (Reflect.has(params, 'series_id')) { params.series_id = ObjectId(params.series_id); }
-  if (Reflect.has(params, 'category_id')) { params.category_id = ObjectId(params.category_id); }
+  if (Reflect.has(params, 'series_id')) {
+    params.series_id = ObjectId(params.series_id);
+  }
+  if (Reflect.has(params, 'category_id')) {
+    params.category_id = ObjectId(params.category_id);
+  }
 
   try {
-    const res = await goodsModel.updateOne({ _id }, { ...params });
-    if (res.nModified === 1) {
-      returnInfo = { error_code: '00', data: null, error_msg: 'Success' };
-    } else {
-      returnInfo = { error_code: 91, data: null, error_msg: '未找到商品' };
-    }
+    await goodsModel.updateOne({ _id }, { ...params });
+    returnInfo = { error_code: '00', data: null, error_msg: 'Success' };
   } catch (error) {
+    console.log('/goods/update error => ', error);
     returnInfo = { error_code: 500, data: null, error_msg: error };
   }
 
@@ -206,14 +160,10 @@ router.delete('/delete', async (ctx) => {
   let returnInfo = null;
 
   try {
-    const res = await goodsModel.deleteMany({ _id: { $in: ids } });
-    const { n, ok } = res;
-    if (ok === 1 && n !== 0) {
-      returnInfo = { error_code: '00', data: null, error_msg: 'Success' };
-    } else {
-      returnInfo = { error_code: 91, data: null, error_msg: '未找到商品' };
-    }
+    await goodsModel.updateMany({ _id: { $in: ids } }, { deleted: 1 });
+    returnInfo = { error_code: '00', data: null, error_msg: 'Success' };
   } catch (error) {
+    console.log('/goods/delete error => ', error);
     returnInfo = { error_code: 500, data: null, error_msg: error };
   }
 

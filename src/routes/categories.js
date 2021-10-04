@@ -6,7 +6,8 @@ const { ObjectId } = require('mongodb');
 
 // 查找：所有类别（左侧菜单）
 router.get('/', async (ctx) => {
-  const res = await categoryModel.aggregate()
+  const res = await categoryModel
+    .aggregate()
     .lookup({
       from: 'series',
       localField: '_id',
@@ -24,7 +25,8 @@ router.get('/s/:id', async (ctx) => {
       params: { id },
     },
   } = ctx;
-  const res = await seriesModel.aggregate() // 聚合
+  const res = await seriesModel
+    .aggregate() // 聚合
     .match({ category_id: ObjectId(id) }) // 聚合查询中，ObjectId 的格式：ObjectId(id)
     .lookup({
       // 联表查询
@@ -74,6 +76,7 @@ router.post('/add', async (ctx) => {
     });
     returnInfo = { error_code: '00', data: null, error_msg: 'Success' };
   } catch (error) {
+    console.log('/category/add error => ', error);
     returnInfo = { error_code: 500, data: null, error_msg: error };
   }
 
@@ -100,6 +103,7 @@ router.post('/s/add', async (ctx) => {
     });
     returnInfo = { error_code: '00', data: null, error_msg: 'Success' };
   } catch (error) {
+    console.log('/category/s/add error => ', error);
     returnInfo = { error_code: 500, data: null, error_msg: error };
   }
 
@@ -126,18 +130,18 @@ router.delete('/delete', async (ctx) => {
     // 判断其下是否含有系列，有则不能删除
     const series_count = await seriesModel.countDocuments({ category_id: id });
     if (series_count !== 0) {
-      ctx.body = { error_code: 92, data: null, error_msg: '存在系列，不能删除' };
+      ctx.body = {
+        error_code: 92,
+        data: null,
+        error_msg: '存在系列，不能删除',
+      };
       return;
     }
-    
-    const res = await categoryModel.deleteOne({ _id: id });
-    const { n, ok } = res;
-    if (ok === 1 && n !== 0) {
-      returnInfo = { error_code: '00', data: null, error_msg: 'Success' };
-    } else {
-      returnInfo = { error_code: 91, data: null, error_msg: '未找到类别' };
-    }
+
+    await categoryModel.deleteOne({ _id: id });
+    returnInfo = { error_code: '00', data: null, error_msg: 'Success' };
   } catch (error) {
+    console.log('/category/delete error => ', error);
     returnInfo = { error_code: 500, data: null, error_msg: error };
   }
 
@@ -164,17 +168,17 @@ router.delete('/s/delete', async (ctx) => {
     // 判断其下是否含有商品，有则不能删除
     const goods_count = await goodsModel.countDocuments({ series_id: id });
     if (goods_count !== 0) {
-      ctx.body = { error_code: 92, data: null, error_msg: '存在商品，不能删除' };
+      ctx.body = {
+        error_code: 92,
+        data: null,
+        error_msg: '存在商品，不能删除',
+      };
       return;
     }
-    const res = await seriesModel.deleteOne({ _id: id });
-    const { n, ok } = res;
-    if (ok === 1 && n !== 0) {
-      returnInfo = { error_code: '00', data: null, error_msg: 'Success' };
-    } else {
-      returnInfo = { error_code: 91, data: null, error_msg: '未找到系列' };
-    }
+    await seriesModel.deleteOne({ _id: id });
+    returnInfo = { error_code: '00', data: null, error_msg: 'Success' };
   } catch (error) {
+    console.log('/category/s/delete error => ', error);
     returnInfo = { error_code: 500, data: null, error_msg: error };
   }
 
@@ -201,13 +205,10 @@ router.put('/update', async (ctx) => {
   Reflect.deleteProperty(params, '_id'); // 去掉第一层的 _id 字段，因为 _id 不需要设置
 
   try {
-    const res = await categoryModel.updateOne({ _id }, { ...params });
-    if (res.nModified === 1) {
-      returnInfo = { error_code: '00', data: null, error_msg: 'Success' };
-    } else {
-      returnInfo = { error_code: 91, data: null, error_msg: '未找到类别' };
-    }
+    await categoryModel.updateOne({ _id }, { ...params });
+    returnInfo = { error_code: '00', data: null, error_msg: 'Success' };
   } catch (error) {
+    console.log('/category/update error => ', error);
     returnInfo = { error_code: 500, data: null, error_msg: error };
   }
 
@@ -238,12 +239,9 @@ router.put('/s/update', async (ctx) => {
 
   try {
     const res = await seriesModel.updateOne({ _id }, { ...params });
-    if (res.nModified === 1) {
-      returnInfo = { error_code: '00', data: null, error_msg: 'Success' };
-    } else {
-      returnInfo = { error_code: 91, data: null, error_msg: '未找到系列' };
-    }
+    returnInfo = { error_code: '00', data: null, error_msg: 'Success' };
   } catch (error) {
+    console.log('/category/s/update error => ', error);
     returnInfo = { error_code: 500, data: null, error_msg: error };
   }
 
