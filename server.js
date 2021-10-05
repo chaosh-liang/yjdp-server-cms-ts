@@ -3,7 +3,7 @@
  * @Email: broli.up.up.up@gmail.com
  * @Date: 2021-08-15 22:00:36
  * @LastEditors: Broli
- * @LastEditTime: 2021-10-05 11:16:39
+ * @LastEditTime: 2021-10-05 22:56:34
  * @Description: 查看日志：pm2 logs process_name|process_id
  */
 
@@ -19,7 +19,10 @@ const categories = require('./src/routes/categories');
 const order = require('./src/routes/order');
 const upload = require('./src/routes/upload');
 const loggedCheck = require('./src/middleware/logged_check');
-const { clearFileSchedule } = require('./src/service/schedule');
+const {
+  clearFilesSchedule,
+  physicallyDeleteGoodsSchedule,
+} = require('./src/service/schedule');
 
 const app = new Koa();
 app.keys = ['REFEVURVX1NFUlZFUl9DTVM=']; // base64: DADUDU_SERVER_CMS
@@ -53,8 +56,9 @@ router.use('/order', order);
 
 app.use(router.routes()).use(router.allowedMethods());
 
-// 定时任务：清理无用文件
-clearFileSchedule();
+// 定时任务
+clearFilesSchedule(); // 清理无用文件
+physicallyDeleteGoodsSchedule(); // 物理删除回收站中的商品
 
 const port = 7716;
 const host =

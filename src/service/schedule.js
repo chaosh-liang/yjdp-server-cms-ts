@@ -9,7 +9,9 @@ const UPLOAD_URL = 'upload';
 let fileDirectory = path.resolve(`D:\\${PUBLIC_URL}\\${UPLOAD_URL}`);
 
 if (process.env.NODE_ENV === 'production') {
-  fileDirectory = path.resolve(`/opt/material/server/${PUBLIC_URL}/${UPLOAD_URL}`);
+  fileDirectory = path.resolve(
+    `/opt/material/server/${PUBLIC_URL}/${UPLOAD_URL}`
+  );
 }
 
 // 清理没用的图片
@@ -51,22 +53,63 @@ const clearUselessPicture = async () => {
   });
 };
 
-const clearFileSchedule = () => {
-  // 定时任务，日期和时间为： 每周一 01:00:00
-  const job = schedule.scheduleJob(
-    { hour: 1, minute: 0, second: 0, dayOfWeek: 1 },
+// 检查回收站中的记录，若有超过30天（含）的，则物理删除
+const physicallyDeleteGoods = async () => {
+  const recycleGoods = await goodsModel.find({ deleted: 1 });
+  if (recycleGoods.length) {
+    const shallbeDeletedGoods = recycleGoods.filter((goods) => {
+      const deletedDate = new Date(goods.update_time).getTime(); // ms
+      const now = Date.now(); // ms
+      const diff = now - deletedDate;
+      const days = parseInt(diff / 1000 / 60 / 60 / 24, 10); // 天
+      return days >= 30;
+    });
+    if (shallbeDeletedGoods.length) {
+      const ids = shallbeDeletedGoods.map((goods) => goods._id.toString());
+      try {
+        // console.log('待删除的商品 => ', ids);
+        goodsModel.deleteMany({ deleted: 1, _id: { $in: ids } }).exec();
+      } catch (error) {
+        console.log('physicallyDeleteGoods/delete error => ', error);
+      }
+    }
+  }
+};
+
+// 定时任务1，日期和时间为： 每周一 02:10:10
+const clearFilesSchedule = () => {
+  const clearFilesJob = schedule.scheduleJob(
+    { hour: 2, minute: 10, second: 10, dayOfWeek: 1 },
     () => {
       /* // FIXME: 调试用
-      const nextCron = job.nextInvocation(); // 返回下次的调用对象，如果被取消了，则返回 null
+      const nextCron = clearFilesJob.nextInvocation(); // 返回下次的调用对象，如果被取消了，则返回 null
       if (nextCron) {
         const {
           _date: { ts },
         } = nextCron;
-        console.log('下次清理日期和时间 => ', new Date(ts));
+        console.log('下次清理无用文件的日期和时间 => ', new Date(ts));
       } */
-      clearUselessPicture(); // 清理没用的图片
+      clearUselessPicture();
     }
   );
 };
 
-module.exports = { clearFileSchedule };
+// 定时任务2，日期和时间为： 每月初一 01:10:10
+const physicallyDeleteGoodsSchedule = () => {
+  const physicallyDeleteGoodsJob = schedule.scheduleJob(
+    { hour: 1, minute: 10, second: 10, date: 1 },
+    () => {
+      /* // FIXME: 调试用
+      const nextCron = physicallyDeleteGoodsJob.nextInvocation(); // 返回下次的调用对象，如果被取消了，则返回 null
+      if (nextCron) {
+        const {
+          _date: { ts },
+        } = nextCron;
+        console.log('下次物理删除商品的日期和时间 => ', new Date(ts));
+      } */
+      physicallyDeleteGoods();
+    }
+  );
+};
+
+module.exports = { clearFilesSchedule, physicallyDeleteGoodsSchedule };
