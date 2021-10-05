@@ -18,7 +18,9 @@ router.post('/', async (ctx) => {
         foreignField: '_id',
         as: 'user_data',
       })
+      .unwind('user_data')
       .project({
+        _id: 0,
         user_id: 1,
         goods_id: 1,
         goods_name: 1,
@@ -42,6 +44,28 @@ router.post('/', async (ctx) => {
     console.log('/order error => ', error);
     ctx.body = { error_code: 500, data: null, error_msg: error };
   }
+});
+
+// 修改订单（状态）
+router.put('/update', async (ctx) => {
+  const {
+    request: {
+      body: params,
+      body: { order_id },
+    },
+  } = ctx;
+
+  let returnInfo = null;
+
+  try {
+    await orderModel.updateOne({ _id: order_id }, { status: params.status });
+    returnInfo = { error_code: '00', data: null, error_msg: 'Success' };
+  } catch (error) {
+    console.log('/order/update error => ', error);
+    returnInfo = { error_code: 500, data: null, error_msg: error };
+  }
+
+  ctx.body = returnInfo;
 });
 
 module.exports = router.routes();
