@@ -25,6 +25,29 @@ router.post('/', async (ctx) => {
       foreignField: '_id',
       as: 'series_data',
     })
+    .unwind('category_data', 'series_data')
+    .project({
+      _id: 1,
+      name: 1,
+      discount_price: 1,
+      discount_threshold: 1,
+      price: 1,
+      home_banner: 1,
+      home_display: 1,
+      desc: 1,
+      currency_unit: 1,
+      count_unit: 1,
+      icon_url: 1,
+      series_id: 1,
+      category_id: 1,
+      desc_url: 1,
+      banner_url: 1,
+      category_data: 1,
+      category_name: '$category_data.name',
+      series_name: '$series_data.name',
+      create_time: 1,
+      update_time: 1,
+    })
     .sort({ update_time: -1 })
     .skip(page_size * (page_index - 1))
     .limit(page_size);

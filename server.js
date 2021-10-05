@@ -3,7 +3,7 @@
  * @Email: broli.up.up.up@gmail.com
  * @Date: 2021-08-15 22:00:36
  * @LastEditors: Broli
- * @LastEditTime: 2021-09-21 15:59:42
+ * @LastEditTime: 2021-10-05 11:16:39
  * @Description: 查看日志：pm2 logs process_name|process_id
  */
 
@@ -16,6 +16,7 @@ const mongoConf = require('./src/config/mongo');
 const author = require('./src/routes/author');
 const goods = require('./src/routes/goods');
 const categories = require('./src/routes/categories');
+const order = require('./src/routes/order');
 const upload = require('./src/routes/upload');
 const loggedCheck = require('./src/middleware/logged_check');
 const { clearFileSchedule } = require('./src/service/schedule');
@@ -48,6 +49,7 @@ router.use('/author', author);
 router.use('/goods', loggedCheck, goods);
 router.use('/upload', loggedCheck, upload);
 router.use('/category', loggedCheck, categories);
+router.use('/order', order);
 
 app.use(router.routes()).use(router.allowedMethods());
 
