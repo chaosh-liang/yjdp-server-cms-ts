@@ -11,27 +11,35 @@ router.post('/', async (ctx) => {
   } = ctx;
 
   const keyword = q?.replace(/[\^\$\\\.\*\+\?\(\)\[\]\{\}\|]/g, '\\$&'); // 转义特殊字符
+  let condition = [];
   const regExp = new RegExp(keyword, 'i');
-  // console.log('模糊查询参数 => ', q, keyword, regExp);
+  if (/^\w{24}$/.test(q)) {
+    // 包含了系列ID
+    condition = [
+      // 多条件模糊查询，聚合过来的字段无法查询
+      { name: { $regex: regExp } },
+      { desc: { $regex: regExp } },
+      { series_id: ObjectId(q) },
+    ];
+  } else {
+    condition = [
+      // 多条件模糊查询，聚合过来的字段无法查询
+      { name: { $regex: regExp } },
+      { desc: { $regex: regExp } },
+    ];
+  }
+  // console.log('模糊查询参数 => ', q, keyword, regExp, condition);
   try {
     const total = await goodsModel.countDocuments({
       deleted: 0,
-      $or: [
-        // 多条件模糊查询，聚合过来的字段无法查询
-        { name: { $regex: regExp } },
-        { desc: { $regex: regExp } },
-      ],
+      $or: condition,
     });
 
     const res = await goodsModel
       .aggregate() // 聚合，联表查询
       .match({
         deleted: 0,
-        $or: [
-          // 多条件模糊查询，聚合过来的字段无法查询
-          { name: { $regex: regExp } },
-          { desc: { $regex: regExp } },
-        ],
+        $or: condition,
       })
       .lookup({
         from: 'categories',
