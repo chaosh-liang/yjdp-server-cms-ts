@@ -32,7 +32,7 @@ router.post('/', async (ctx) => {
         order_id: '$_id',
         user_name: '$user_data.nick_name',
       })
-      .sort({ update_time: -1 })
+      .sort({ create_time: -1 })
       .skip(page_size * (page_index - 1))
       .limit(page_size);
     ctx.body = {
