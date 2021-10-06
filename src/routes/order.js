@@ -5,24 +5,36 @@ const orderModel = require('../model/orders');
 router.post('/', async (ctx) => {
   const {
     request: {
-      body: { page_size = 10, page_index = 1 },
+      body: { page_size = 10, page_index = 1, q },
     },
   } = ctx;
+  const keyword = q?.replace(/[\^\$\\\.\*\+\?\(\)\[\]\{\}\|]/g, '\\$&'); // 转义特殊字符
+  const regExp = new RegExp(keyword, 'i');
+  // console.log('模糊查询参数 => ', q, keyword, regExp);
+
   try {
-    const total = await orderModel.estimatedDocumentCount();
+    const total = await orderModel.countDocuments({
+      $or: [
+        // 多条件模糊查询，聚合过来的字段无法查询
+        { nick_name: { $regex: regExp } },
+        { desc: { $regex: regExp } },
+      ],
+    });
     const res = await orderModel
       .aggregate()
-      .lookup({
-        from: 'wxusers',
-        localField: 'user_id',
-        foreignField: '_id',
-        as: 'user_data',
+      .match({
+        $or: [
+          // 多条件模糊查询，聚合过来的字段无法查询
+          // { _id: { $regex: regExp } }, // _id 为 ObjectId 类型用不了模糊查询
+          { nick_name: { $regex: regExp } },
+          { desc: { $regex: regExp } },
+        ],
       })
-      .unwind('user_data')
       .project({
         _id: 0,
         user_id: 1,
         goods_id: 1,
+        nick_name: 1,
         goods_name: 1,
         gcount: 1,
         status: 1,
@@ -30,7 +42,6 @@ router.post('/', async (ctx) => {
         currency_unit: 1,
         create_time: 1,
         order_id: '$_id',
-        user_name: '$user_data.nick_name',
       })
       .sort({ create_time: -1 })
       .skip(page_size * (page_index - 1))

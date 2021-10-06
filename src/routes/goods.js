@@ -6,56 +6,80 @@ const { ObjectId } = require('mongodb');
 router.post('/', async (ctx) => {
   const {
     request: {
-      body: { page_size = 10, page_index = 1 },
+      body: { page_size = 10, page_index = 1, q },
     },
   } = ctx;
-  const total = await goodsModel.countDocuments({ deleted: 0 });
-  const res = await goodsModel
-    .aggregate() // 聚合，联表查询
-    .match({ deleted: 0 })
-    .lookup({
-      from: 'categories',
-      localField: 'category_id',
-      foreignField: '_id',
-      as: 'category_data',
-    })
-    .lookup({
-      from: 'series',
-      localField: 'series_id',
-      foreignField: '_id',
-      as: 'series_data',
-    })
-    .unwind('category_data', 'series_data')
-    .project({
-      _id: 1,
-      name: 1,
-      discount_price: 1,
-      discount_threshold: 1,
-      price: 1,
-      home_banner: 1,
-      home_display: 1,
-      desc: 1,
-      currency_unit: 1,
-      count_unit: 1,
-      icon_url: 1,
-      series_id: 1,
-      category_id: 1,
-      desc_url: 1,
-      banner_url: 1,
-      category_data: 1,
-      category_name: '$category_data.name',
-      series_name: '$series_data.name',
-      create_time: 1,
-      update_time: 1,
-    })
-    .sort({ update_time: -1 })
-    .skip(page_size * (page_index - 1))
-    .limit(page_size);
-  ctx.body = {
-    error_code: '00',
-    data: { res, total, page_index, page_size },
-    error_msg: 'Success',
-  };
+
+  const keyword = q?.replace(/[\^\$\\\.\*\+\?\(\)\[\]\{\}\|]/g, '\\$&'); // 转义特殊字符
+  const regExp = new RegExp(keyword, 'i');
+  // console.log('模糊查询参数 => ', q, keyword, regExp);
+  try {
+    const total = await goodsModel.countDocuments({
+      deleted: 0,
+      $or: [
+        // 多条件模糊查询，聚合过来的字段无法查询
+        { name: { $regex: regExp } },
+        { desc: { $regex: regExp } },
+      ],
+    });
+
+    const res = await goodsModel
+      .aggregate() // 聚合，联表查询
+      .match({
+        deleted: 0,
+        $or: [
+          // 多条件模糊查询，聚合过来的字段无法查询
+          { name: { $regex: regExp } },
+          { desc: { $regex: regExp } },
+        ],
+      })
+      .lookup({
+        from: 'categories',
+        localField: 'category_id',
+        foreignField: '_id',
+        as: 'category_data',
+      })
+      .lookup({
+        from: 'series',
+        localField: 'series_id',
+        foreignField: '_id',
+        as: 'series_data',
+      })
+      .unwind('category_data', 'series_data')
+      .project({
+        _id: 1,
+        name: 1,
+        discount_price: 1,
+        discount_threshold: 1,
+        price: 1,
+        home_banner: 1,
+        home_display: 1,
+        desc: 1,
+        currency_unit: 1,
+        count_unit: 1,
+        icon_url: 1,
+        series_id: 1,
+        category_id: 1,
+        desc_url: 1,
+        banner_url: 1,
+        category_data: 1,
+        category_name: '$category_data.name',
+        series_name: '$series_data.name',
+        create_time: 1,
+        update_time: 1,
+      })
+      .sort({ update_time: -1 })
+      .skip(page_size * (page_index - 1))
+      .limit(page_size);
+    ctx.body = {
+      error_code: '00',
+      data: { res, total, page_index, page_size },
+      error_msg: 'Success',
+    };
+  } catch (error) {
+    console.log('/goods error => ', error);
+    ctx.body = { error_code: 500, data: null, error_msg: error };
+  }
 });
 
 // 获取所有失效的商品-分页
