@@ -3,7 +3,7 @@
  * @Email: broli.up.up.up@gmail.com
  * @Date: 2021-08-15 22:00:36
  * @LastEditors: Broli
- * @LastEditTime: 2021-10-05 22:56:34
+ * @LastEditTime: 2021-10-08 17:25:07
  * @Description: 查看日志：pm2 logs process_name|process_id
  */
 
@@ -36,7 +36,7 @@ app.use(
   // session 配置
   koaSession(
     {
-      maxAge: 24 * 60 * 60 * 1000, // 单位：ms
+      maxAge: 3 * 24 * 60 * 60 * 1000, // 单位：ms，过期时间：3 天
       httpOnly: true,
       signed: true,
       rolling: true,
