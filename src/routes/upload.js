@@ -7,7 +7,7 @@ const UPLOAD_URL = 'upload';
 let fileDirectory = `D:\\${PUBLIC_URL}\\${UPLOAD_URL}`;
 
 // @Description 见 server.js 中对应的说明
-let ip = 'localhost:7716'; // 区分环境
+let ip = 'localhost:7715'; // 区分环境
 
 if (process.env.NODE_ENV === 'production') {
   ip = '101.34.21.222';
