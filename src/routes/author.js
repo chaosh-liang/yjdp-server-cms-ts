@@ -21,7 +21,7 @@ const fetchBingImage = () => {
         }
       )
       .on('error', (error) => {
-        console.log('Error: ' + error.message);
+        console.log('Error: ', error.message);
         reject(error.message);
       });
   });
