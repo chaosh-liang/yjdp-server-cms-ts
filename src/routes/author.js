@@ -40,9 +40,16 @@ router.post('/login', async (ctx) => {
     if (!accountRes) {
       ctx.body = { error_code: '92', data: null, error_msg: '帐号不存在' };
     } else if (res) {
+      const { user_name, role } = res;
+      const buff = Buffer.from(`${role}`, 'utf-8'); // 转化成 base64
+      const base64_role = buff.toString('base64');
       let n = ctx.session.views || 0;
       ctx.session.views = n++;
-      ctx.body = { error_code: '00', data: null, error_msg: '登录成功' };
+      ctx.body = {
+        error_code: '00',
+        data: { res: { user_name, role: base64_role } },
+        error_msg: '登录成功',
+      };
       ctx.response.status = 200;
     } else {
       ctx.body = { error_code: '93', data: null, error_msg: '密码错误' };
