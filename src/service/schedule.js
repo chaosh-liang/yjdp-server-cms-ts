@@ -4,7 +4,7 @@ const schedule = require('node-schedule');
 const goodsModel = require('../model/goods');
 const seriesModel = require('../model/series');
 
-const PUBLIC_URL = 'dadudu_public';
+const PUBLIC_URL = 'yjdp_public';
 const UPLOAD_URL = 'upload';
 let fileDirectory = path.resolve(`D:\\${PUBLIC_URL}\\${UPLOAD_URL}`);
 

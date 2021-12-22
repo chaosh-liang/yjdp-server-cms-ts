@@ -1,1 +1,1 @@
-pm2 stop file_server dadudu_server_cms
+pm2 stop file_server yjdp_server_cms

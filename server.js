@@ -3,7 +3,7 @@
  * @Email: broli.up.up.up@gmail.com
  * @Date: 2021-08-15 22:00:36
  * @LastEditors: Broli
- * @LastEditTime: 2021-10-08 17:52:22
+ * @LastEditTime: 2021-12-22 14:38:16
  * @Description: 查看日志：pm2 logs process_name|process_id
  */
 
@@ -25,8 +25,8 @@ const {
 } = require('./src/service/schedule');
 
 const app = new Koa();
-app.keys = ['REFEVURVX1NFUlZFUl9DTVM=']; // base64: DADUDU_SERVER_CMS
-const ROUTER_PREFIX = '/cms/dadudu/api';
+app.keys = ['WUpEUF9TRVJWRVJfQ01T']; // base64: YJDP_SERVER_CMS
+const ROUTER_PREFIX = '/cms/yjdp/api';
 
 mongoConf.connect();
 
@@ -65,7 +65,7 @@ const host =
   process.env.NODE_ENV === 'production' ? '101.34.21.222' : 'localhost'; // 区分环境
 
 app.listen(port, () => {
-  console.log(`dadudu cms server running at http://${host}:${port}`);
+  console.log(`yjdp cms server running at http://${host}:${port}`);
 });
 
 /**

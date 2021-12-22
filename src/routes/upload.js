@@ -2,7 +2,7 @@ const path = require('path');
 const koaBody = require('koa-body');
 const router = require('@koa/router')();
 
-const PUBLIC_URL = 'dadudu_public';
+const PUBLIC_URL = 'yjdp_public';
 const UPLOAD_URL = 'upload';
 let fileDirectory = `D:\\${PUBLIC_URL}\\${UPLOAD_URL}`;
 

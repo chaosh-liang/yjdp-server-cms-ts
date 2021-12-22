@@ -3,10 +3,10 @@
  * @Email: broli.up.up.up@gmail.com
  * @Date: 2021-09-10 10:53:27
  * @LastEditors: Broli
- * @LastEditTime: 2021-09-18 11:32:34
+ * @LastEditTime: 2021-12-22 14:35:13
  * @Description: pm2 的配置文件
- * @Description: 静态文件目录：开发环境（本地）D:\dadudu_public\upload
- * @Description: 静态文件目录：生产环境（线上）/opt/material/server/dadudu_public/upload
+ * @Description: 静态文件目录：开发环境（本地）D:\yjdp_public\upload
+ * @Description: 静态文件目录：生产环境（线上）/opt/material/server/yjdp_public/upload
  * @Description: 启动服务：开发环境（默认开发环境） => pm2 start ecosystem.config.js
  * @Description: 启动服务：生产环境（须指定参数 --env production） => pm2 start ecosystem.config.js --env production
  */
@@ -15,7 +15,7 @@ const os = require('os');
 const fs = require('fs');
 const path = require('path');
 
-const PUBLIC_URL = 'dadudu_public';
+const PUBLIC_URL = 'yjdp_public';
 const UPLOAD_URL = 'upload';
 
 // 路径，区分静态文件服务的目录
@@ -60,7 +60,7 @@ module.exports = {
       },
     },
     {
-      name: 'dadudu_server_cms', // name 不要随意修改，如需修改，请同步修改脚本文件（.bin）
+      name: 'yjdp_server_cms', // name 不要随意修改，如需修改，请同步修改脚本文件（.bin）
       script: path.join(__dirname, './server.js'),
       watch: true,
       ignore_watch: ['node_modules'],
