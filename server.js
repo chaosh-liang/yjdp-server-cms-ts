@@ -3,7 +3,7 @@
  * @Email: broli.up.up.up@gmail.com
  * @Date: 2021-08-15 22:00:36
  * @LastEditors: Broli
- * @LastEditTime: 2021-12-22 14:38:16
+ * @LastEditTime: 2021-12-23 21:01:21
  * @Description: 查看日志：pm2 logs process_name|process_id
  */
 
@@ -61,11 +61,10 @@ clearFilesSchedule(); // 清理无用文件
 physicallyDeleteGoodsSchedule(); // 物理删除回收站中的商品
 
 const port = 7716;
-const host =
-  process.env.NODE_ENV === 'production' ? '101.34.21.222' : 'localhost'; // 区分环境
+const host = 'localhost'; // 无需区分环境
 
 app.listen(port, () => {
-  console.log(`yjdp cms server running at http://${host}:${port}`);
+  console.log(`yjdp cms server running at ${host}:${port}`);
 });
 
 /**

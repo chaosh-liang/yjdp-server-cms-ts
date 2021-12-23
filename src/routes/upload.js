@@ -7,10 +7,10 @@ const UPLOAD_URL = 'upload';
 let fileDirectory = `D:\\${PUBLIC_URL}\\${UPLOAD_URL}`;
 
 // @Description 见 server.js 中对应的说明
-let ip = 'localhost:7715'; // 区分环境
+let protocol_ip = 'http://localhost:7715'; // 区分环境
 
 if (process.env.NODE_ENV === 'production') {
-  ip = '101.34.21.222';
+  protocol_ip = 'https://liangchaoshun.top';
   fileDirectory = `/opt/material/server/${PUBLIC_URL}/${UPLOAD_URL}`;
 }
 
@@ -33,10 +33,10 @@ router.post(
       },
     } = ctx;
     const [filename] = path.match(/\upload_.+$/g);
-    // console.log('ip filename => ', ip, filename);
+    // console.log('protocol_ip filename => ', protocol_ip, filename);
     ctx.body = {
       error_code: '00',
-      data: { res: `http://${ip}/${UPLOAD_URL}/${filename}` },
+      data: { res: `${protocol_ip}/${UPLOAD_URL}/${filename}` },
       env: process.env.NODE_ENV,
       error_msg: 'Success',
     };
