@@ -1,6 +1,8 @@
-const router = require('@koa/router')();
-const goodsModel = require('../model/goods');
-const { ObjectId } = require('mongodb');
+import Router from '@koa/router'
+import goodsModel from '../model/goods'
+import { ObjectId } from 'mongodb'
+
+const router = new Router()
 
 // 获取所有的商品-分页
 router.post('/', async (ctx) => {
@@ -8,32 +10,32 @@ router.post('/', async (ctx) => {
     request: {
       body: { page_size = 10, page_index = 1, q },
     },
-  } = ctx;
+  } = ctx
 
-  const keyword = q?.replace(/[\^\$\\\.\*\+\?\(\)\[\]\{\}\|]/g, '\\$&'); // 转义特殊字符
-  let condition = [];
-  const regExp = new RegExp(keyword, 'i');
+  const keyword = q?.replace(/[\^\$\\\.\*\+\?\(\)\[\]\{\}\|]/g, '\\$&') // 转义特殊字符
+  let condition = []
+  const regExp = new RegExp(keyword, 'i')
   if (/^\w{24}$/.test(q)) {
     // 包含了系列ID
     condition = [
       // 多条件模糊查询，聚合过来的字段无法查询
       { name: { $regex: regExp } },
       { desc: { $regex: regExp } },
-      { series_id: ObjectId(q) },
-    ];
+      { series_id: new ObjectId(q) },
+    ]
   } else {
     condition = [
       // 多条件模糊查询，聚合过来的字段无法查询
       { name: { $regex: regExp } },
       { desc: { $regex: regExp } },
-    ];
+    ]
   }
   // console.log('模糊查询参数 => ', q, keyword, regExp, condition);
   try {
     const total = await goodsModel.countDocuments({
       deleted: 0,
       $or: condition,
-    });
+    })
 
     const res = await goodsModel
       .aggregate() // 聚合，联表查询
@@ -78,17 +80,17 @@ router.post('/', async (ctx) => {
       })
       .sort({ update_time: -1 })
       .skip(page_size * (page_index - 1))
-      .limit(page_size);
+      .limit(page_size)
     ctx.body = {
       error_code: '00',
       data: { res, total, page_index, page_size },
       error_msg: 'Success',
-    };
+    }
   } catch (error) {
-    console.log('/goods error => ', error);
-    ctx.body = { error_code: 500, data: null, error_msg: error };
+    console.log('/goods error => ', error)
+    ctx.body = { error_code: 500, data: null, error_msg: error }
   }
-});
+})
 
 // 获取所有失效的商品-分页
 router.post('/expired', async (ctx) => {
@@ -96,19 +98,19 @@ router.post('/expired', async (ctx) => {
     request: {
       body: { page_size = 10, page_index = 1 },
     },
-  } = ctx;
-  const total = await goodsModel.countDocuments({ deleted: 1 });
+  } = ctx
+  const total = await goodsModel.countDocuments({ deleted: 1 })
   const res = await goodsModel
     .find({ deleted: 1 })
     .sort({ update_time: -1 })
     .skip(page_size * (page_index - 1))
-    .limit(page_size);
+    .limit(page_size)
   ctx.body = {
     error_code: '00',
     data: { res, total, page_index, page_size },
     error_msg: 'Success',
-  };
-});
+  }
+})
 
 // 添加商品
 router.post('/add', async (ctx) => {
@@ -131,9 +133,9 @@ router.post('/add', async (ctx) => {
         count_unit,
       },
     },
-  } = ctx;
+  } = ctx
 
-  let returnInfo = null;
+  let returnInfo = null
 
   try {
     await goodsModel.create({
@@ -150,17 +152,17 @@ router.post('/add', async (ctx) => {
       currency_unit,
       discount_price,
       discount_threshold,
-      series_id: ObjectId(series_id),
-      category_id: ObjectId(category_id),
-    });
-    returnInfo = { error_code: '00', data: null, error_msg: 'Success' };
+      series_id: new ObjectId(series_id),
+      category_id: new ObjectId(category_id),
+    })
+    returnInfo = { error_code: '00', data: null, error_msg: 'Success' }
   } catch (error) {
-    console.log('/goods/add error => ', error);
-    returnInfo = { error_code: 500, data: null, error_msg: error };
+    console.log('/goods/add error => ', error)
+    returnInfo = { error_code: 500, data: null, error_msg: error }
   }
 
-  ctx.body = returnInfo;
-});
+  ctx.body = returnInfo
+})
 
 // 修改商品
 router.put('/update', async (ctx) => {
@@ -169,34 +171,34 @@ router.put('/update', async (ctx) => {
       body: params,
       body: { _id },
     },
-  } = ctx;
+  } = ctx
 
   if (_id === void 0) {
     // 如果没有传入 _id
-    ctx.body = { error_code: 90, data: null, error_msg: '参数错误' };
-    return;
+    ctx.body = { error_code: 90, data: null, error_msg: '参数错误' }
+    return
   }
 
-  let returnInfo = null;
+  let returnInfo = null
 
-  Reflect.deleteProperty(params, '_id'); // 去掉第一层的 _id 字段，因为 _id 不需要设置
+  Reflect.deleteProperty(params, '_id') // 去掉第一层的 _id 字段，因为 _id 不需要设置
   if (Reflect.has(params, 'series_id')) {
-    params.series_id = ObjectId(params.series_id);
+    params.series_id = new ObjectId(params.series_id)
   }
   if (Reflect.has(params, 'category_id')) {
-    params.category_id = ObjectId(params.category_id);
+    params.category_id = new ObjectId(params.category_id)
   }
 
   try {
-    await goodsModel.updateOne({ _id }, { ...params });
-    returnInfo = { error_code: '00', data: null, error_msg: 'Success' };
+    await goodsModel.updateOne({ _id }, { ...params })
+    returnInfo = { error_code: '00', data: null, error_msg: 'Success' }
   } catch (error) {
-    console.log('/goods/update error => ', error);
-    returnInfo = { error_code: 500, data: null, error_msg: error };
+    console.log('/goods/update error => ', error)
+    returnInfo = { error_code: 500, data: null, error_msg: error }
   }
 
-  ctx.body = returnInfo;
-});
+  ctx.body = returnInfo
+})
 
 // 批量删除商品
 router.delete('/delete', async (ctx) => {
@@ -204,25 +206,25 @@ router.delete('/delete', async (ctx) => {
     request: {
       body: { ids },
     },
-  } = ctx;
+  } = ctx
 
   if (ids === void 0) {
     // 如果没有传入 ids
-    ctx.body = { error_code: 90, data: null, error_msg: '参数错误' };
-    return;
+    ctx.body = { error_code: 90, data: null, error_msg: '参数错误' }
+    return
   }
 
-  let returnInfo = null;
+  let returnInfo = null
 
   try {
-    await goodsModel.updateMany({ _id: { $in: ids } }, { deleted: 1 });
-    returnInfo = { error_code: '00', data: null, error_msg: 'Success' };
+    await goodsModel.updateMany({ _id: { $in: ids } }, { deleted: 1 })
+    returnInfo = { error_code: '00', data: null, error_msg: 'Success' }
   } catch (error) {
-    console.log('/goods/delete error => ', error);
-    returnInfo = { error_code: 500, data: null, error_msg: error };
+    console.log('/goods/delete error => ', error)
+    returnInfo = { error_code: 500, data: null, error_msg: error }
   }
 
-  ctx.body = returnInfo;
-});
+  ctx.body = returnInfo
+})
 
-module.exports = router.routes();
+export default router.routes()

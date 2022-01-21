@@ -3,7 +3,7 @@
  * @Email: broli.up.up.up@gmail.com
  * @Date: 2021-09-10 10:53:27
  * @LastEditors: Broli
- * @LastEditTime: 2021-12-22 14:35:13
+ * @LastEditTime: 2022-01-21 17:58:45
  * @Description: pm2 的配置文件
  * @Description: 静态文件目录：开发环境（本地）D:\yjdp_public\upload
  * @Description: 静态文件目录：生产环境（线上）/opt/material/server/yjdp_public/upload
@@ -11,40 +11,38 @@
  * @Description: 启动服务：生产环境（须指定参数 --env production） => pm2 start ecosystem.config.js --env production
  */
 
-const os = require('os');
-const fs = require('fs');
-const path = require('path');
+const os = require('os')
+const fs = require('fs')
+const path = require('path')
 
-const PUBLIC_URL = 'yjdp_public';
-const UPLOAD_URL = 'upload';
+const PUBLIC_URL = 'yjdp_public'
+const UPLOAD_URL = 'upload'
 
 // 路径，区分静态文件服务的目录
-let publicAbsoluteDir = '';
-let uploadAbsoluteDir = '';
+let publicAbsoluteDir = ''
+let uploadAbsoluteDir = ''
 
 switch (os.platform()) {
   case 'win32': // Windows
-    publicAbsoluteDir = `D:\\${PUBLIC_URL}`;
-    uploadAbsoluteDir = `D:\\${PUBLIC_URL}\\${UPLOAD_URL}`;
-    break;
+    publicAbsoluteDir = `D:\\${PUBLIC_URL}`
+    uploadAbsoluteDir = `D:\\${PUBLIC_URL}\\${UPLOAD_URL}`
+    break
   case 'darwin': // Mac
-    publicAbsoluteDir = `/opt/${PUBLIC_URL}`;
-    uploadAbsoluteDir = `/opt/${PUBLIC_URL}/${UPLOAD_URL}`;
+    publicAbsoluteDir = `/opt/${PUBLIC_URL}`
+    uploadAbsoluteDir = `/opt/${PUBLIC_URL}/${UPLOAD_URL}`
   case 'linux': // Linux
-    publicAbsoluteDir = `/opt/material/server/${PUBLIC_URL}`;
-    uploadAbsoluteDir = `/opt/material/server/${PUBLIC_URL}/${UPLOAD_URL}`;
+    publicAbsoluteDir = `/opt/material/server/${PUBLIC_URL}`
+    uploadAbsoluteDir = `/opt/material/server/${PUBLIC_URL}/${UPLOAD_URL}`
   // no default
 }
 
 // 取绝对路径
-const path_publicAbsoluteDir = path.resolve(publicAbsoluteDir);
-const path_uploadAbsoluteDir = path.resolve(uploadAbsoluteDir);
+const path_publicAbsoluteDir = path.resolve(publicAbsoluteDir)
+const path_uploadAbsoluteDir = path.resolve(uploadAbsoluteDir)
 
 // 判断嵌套的路径，须逐层判断和新建
-if (!fs.existsSync(path_publicAbsoluteDir))
-  fs.mkdirSync(path_publicAbsoluteDir);
-if (!fs.existsSync(path_uploadAbsoluteDir))
-  fs.mkdirSync(path_uploadAbsoluteDir);
+if (!fs.existsSync(path_publicAbsoluteDir)) fs.mkdirSync(path_publicAbsoluteDir)
+if (!fs.existsSync(path_uploadAbsoluteDir)) fs.mkdirSync(path_uploadAbsoluteDir)
 
 module.exports = {
   apps: [
@@ -61,9 +59,10 @@ module.exports = {
     },
     {
       name: 'yjdp_server_cms', // name 不要随意修改，如需修改，请同步修改脚本文件（.bin）
-      script: path.join(__dirname, './server.js'),
+      script: path.join(__dirname, './server.ts'),
       watch: true,
       ignore_watch: ['node_modules'],
+      // interpreter: path.resolve(__dirname, 'node_noduels/.bin/ts-node'),
       env: {
         NODE_ENV: 'development',
       },
@@ -72,4 +71,4 @@ module.exports = {
       },
     },
   ],
-};
+}

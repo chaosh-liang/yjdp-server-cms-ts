@@ -1,5 +1,7 @@
-const router = require('@koa/router')();
-const orderModel = require('../model/orders');
+import Router from '@koa/router'
+import orderModel from '../model/orders'
+
+const router = new Router()
 
 // 查询订单数据-分页
 router.post('/', async (ctx) => {
@@ -7,9 +9,9 @@ router.post('/', async (ctx) => {
     request: {
       body: { page_size = 10, page_index = 1, q },
     },
-  } = ctx;
-  const keyword = q?.replace(/[\^\$\\\.\*\+\?\(\)\[\]\{\}\|]/g, '\\$&'); // 转义特殊字符
-  const regExp = new RegExp(keyword, 'i');
+  } = ctx
+  const keyword = q?.replace(/[\^\$\\\.\*\+\?\(\)\[\]\{\}\|]/g, '\\$&') // 转义特殊字符
+  const regExp = new RegExp(keyword, 'i')
   // console.log('模糊查询参数 => ', q, keyword, regExp);
 
   try {
@@ -19,7 +21,7 @@ router.post('/', async (ctx) => {
         { nick_name: { $regex: regExp } },
         { desc: { $regex: regExp } },
       ],
-    });
+    })
     const res = await orderModel
       .aggregate()
       .match({
@@ -45,38 +47,38 @@ router.post('/', async (ctx) => {
       })
       .sort({ create_time: -1 })
       .skip(page_size * (page_index - 1))
-      .limit(page_size);
+      .limit(page_size)
     ctx.body = {
       error_code: '00',
       data: { res, total, page_index, page_size },
       error_msg: 'Success',
-    };
+    }
   } catch (error) {
-    console.log('/order error => ', error);
-    ctx.body = { error_code: 500, data: null, error_msg: error };
+    console.log('/order error => ', error)
+    ctx.body = { error_code: 500, data: null, error_msg: error }
   }
-});
+})
 
 // 修改订单（状态）
-router.put('/update', async (ctx) => {
+router.put('/update', async (ctx, done) => {
   const {
     request: {
       body: params,
       body: { order_id },
     },
-  } = ctx;
+  } = ctx
 
-  let returnInfo = null;
+  let returnInfo = null
 
   try {
-    await orderModel.updateOne({ _id: order_id }, { status: params.status });
-    returnInfo = { error_code: '00', data: null, error_msg: 'Success' };
+    await orderModel.updateOne({ _id: order_id }, { status: params.status })
+    returnInfo = { error_code: '00', data: null, error_msg: 'Success' }
   } catch (error) {
-    console.log('/order/update error => ', error);
-    returnInfo = { error_code: 500, data: null, error_msg: error };
+    console.log('/order/update error => ', error)
+    returnInfo = { error_code: 500, data: null, error_msg: error }
   }
 
-  ctx.body = returnInfo;
-});
+  ctx.body = returnInfo
+})
 
-module.exports = router.routes();
+export default router.routes()

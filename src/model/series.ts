@@ -1,7 +1,7 @@
-const mongoose = require('mongoose');
-const { Schema, model } = mongoose;
+import { Schema, model } from 'mongoose'
+import type { ISeries } from '../../@types/typing'
 
-const schema = new Schema(
+const schema = new Schema<ISeries>(
   {
     name: String,
     icon_url: String,
@@ -10,6 +10,6 @@ const schema = new Schema(
     category_id: Schema.Types.ObjectId,
   },
   { timestamps: { createdAt: 'create_time', updatedAt: 'update_time' } }
-);
+)
 
-module.exports = model('series', schema);
+export default model<ISeries>('series', schema)
