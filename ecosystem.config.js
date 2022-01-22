@@ -3,7 +3,7 @@
  * @Email: broli.up.up.up@gmail.com
  * @Date: 2021-09-10 10:53:27
  * @LastEditors: Broli
- * @LastEditTime: 2022-01-22 15:54:19
+ * @LastEditTime: 2022-01-22 23:18:35
  * @Description: pm2 的配置文件
  * @Description: 静态文件目录：开发环境（本地）D:\yjdp_public\upload
  * @Description: 静态文件目录：生产环境（线上）/opt/material/server/yjdp_public/upload
@@ -15,35 +15,37 @@ const os = require('os')
 const fs = require('fs')
 const path = require('path')
 
-const PUBLIC_URL = 'yjdp_public'
-const UPLOAD_URL = 'upload'
+// 常量
+const PUBLIC_URL = 'yjdp_public' // 静态文件服务目录
+const UPLOAD_URL = 'upload' // 服务目录 > 图片目录
 
 // 路径，区分静态文件服务的目录
-let publicAbsoluteDir = ''
 let uploadAbsoluteDir = ''
 
 switch (os.platform()) {
   case 'win32': // Windows
-    publicAbsoluteDir = `D:\\${PUBLIC_URL}`
     uploadAbsoluteDir = `D:\\${PUBLIC_URL}\\${UPLOAD_URL}`
     break
   case 'darwin': // Mac
-    publicAbsoluteDir = `/opt/${PUBLIC_URL}`
     uploadAbsoluteDir = `/opt/${PUBLIC_URL}/${UPLOAD_URL}`
     break
   case 'linux': // Linux
-    publicAbsoluteDir = `/opt/material/server/${PUBLIC_URL}`
     uploadAbsoluteDir = `/opt/material/server/${PUBLIC_URL}/${UPLOAD_URL}`
   // no default
 }
 
 // 取绝对路径
-const path_publicAbsoluteDir = path.resolve(publicAbsoluteDir)
 const path_uploadAbsoluteDir = path.resolve(uploadAbsoluteDir)
 
-// 判断嵌套的路径，须逐层判断和新建
-if (!fs.existsSync(path_publicAbsoluteDir)) fs.mkdirSync(path_publicAbsoluteDir)
-if (!fs.existsSync(path_uploadAbsoluteDir)) fs.mkdirSync(path_uploadAbsoluteDir)
+// 判断嵌套的路径，递归创建目录（不需要逐层判断和新建）
+if (!fs.existsSync(path_uploadAbsoluteDir))
+  fs.mkdirSync(path_uploadAbsoluteDir, { recursive: true })
+
+// public 路径
+const path_publicAbsoluteDir = path_uploadAbsoluteDir.slice(
+  0,
+  path_uploadAbsoluteDir.lastIndexOf(UPLOAD_URL) - 1
+)
 
 module.exports = {
   apps: [
