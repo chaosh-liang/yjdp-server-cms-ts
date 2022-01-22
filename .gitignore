@@ -45,5 +45,6 @@ debug.log
 
 # myseting
 /dist
+/build
 .cache
 .analysis
