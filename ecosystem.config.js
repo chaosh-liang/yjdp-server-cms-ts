@@ -3,7 +3,7 @@
  * @Email: broli.up.up.up@gmail.com
  * @Date: 2021-09-10 10:53:27
  * @LastEditors: Broli
- * @LastEditTime: 2022-01-21 17:58:45
+ * @LastEditTime: 2022-01-22 14:24:33
  * @Description: pm2 的配置文件
  * @Description: 静态文件目录：开发环境（本地）D:\yjdp_public\upload
  * @Description: 静态文件目录：生产环境（线上）/opt/material/server/yjdp_public/upload
@@ -30,6 +30,7 @@ switch (os.platform()) {
   case 'darwin': // Mac
     publicAbsoluteDir = `/opt/${PUBLIC_URL}`
     uploadAbsoluteDir = `/opt/${PUBLIC_URL}/${UPLOAD_URL}`
+    break
   case 'linux': // Linux
     publicAbsoluteDir = `/opt/material/server/${PUBLIC_URL}`
     uploadAbsoluteDir = `/opt/material/server/${PUBLIC_URL}/${UPLOAD_URL}`
@@ -59,10 +60,11 @@ module.exports = {
     },
     {
       name: 'yjdp_server_cms', // name 不要随意修改，如需修改，请同步修改脚本文件（.bin）
-      script: path.join(__dirname, './server.ts'),
-      watch: true,
+      script: path.join(__dirname, './dist/server.js'),
+      watch: ['dist'],
+      // Delay between restart
+      watch_delay: 1000,
       ignore_watch: ['node_modules'],
-      // interpreter: path.resolve(__dirname, 'node_noduels/.bin/ts-node'),
       env: {
         NODE_ENV: 'development',
       },

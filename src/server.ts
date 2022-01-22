@@ -3,7 +3,7 @@
  * @Email: broli.up.up.up@gmail.com
  * @Date: 2021-08-15 22:00:36
  * @LastEditors: Broli
- * @LastEditTime: 2022-01-21 14:34:21
+ * @LastEditTime: 2022-01-22 15:15:27
  * @Description: 查看日志：pm2 logs process_name|process_id
  */
 
@@ -12,18 +12,19 @@ import cors from '@koa/cors'
 import Router from '@koa/router'
 import bodyParser = require('koa-bodyparser')
 import koaSession = require('koa-session')
-import mongoConf from './src/config/mongo'
-import author from './src/routes/author'
-import goods from './src/routes/goods'
-import categories from './src/routes/categories'
-import order from './src/routes/order'
-import upload from './src/routes/upload'
-import loggedCheck from './src/middleware/logged_check'
+import mongoConf from './config/mongo'
+
+import author from './routes/author'
+import goods from './routes/goods'
+import categories from './routes/categories'
+import order from './routes/order'
+import upload from './routes/upload'
+import loggedCheck from './middleware/logged_check'
 
 import {
   clearFilesSchedule,
   physicallyDeleteGoodsSchedule,
-} from './src/service/schedule'
+} from './service/schedule'
 
 const app = new Koa()
 const router = new Router()

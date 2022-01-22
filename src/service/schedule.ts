@@ -3,6 +3,7 @@ import path from 'path'
 import goodsModel from '../model/goods'
 import seriesModel from '../model/series'
 import schedule = require('node-schedule')
+import type { IGoods, ISeries } from '@/@types/typing'
 
 const PUBLIC_URL = 'yjdp_public'
 const UPLOAD_URL = 'upload'
@@ -19,7 +20,7 @@ const clearUselessPicture = async () => {
   const allGoods = await goodsModel.find()
   const allSeries = await seriesModel.find()
   const dbGoodsPicture = allGoods // 商品的图片
-    .map((goods) => {
+    .map((goods: IGoods) => {
       const { icon_url, banner_url, desc_url } = goods
       const [, icon_file_name] = icon_url.match(/upload\/(.+)/) ?? [
         ,
@@ -37,7 +38,7 @@ const clearUselessPicture = async () => {
     })
     .flat()
   const dbSeriesPicture = allSeries // 系列的图片
-    .map((series) => {
+    .map((series: ISeries) => {
       const { icon_url } = series
       const [, icon_file_name] = icon_url.match(/upload\/(.+)/) ?? [
         ,
@@ -61,7 +62,7 @@ const clearUselessPicture = async () => {
 const physicallyDeleteGoods = async () => {
   const recycleGoods = await goodsModel.find({ deleted: 1 })
   if (recycleGoods.length) {
-    const shallbeDeletedGoods = recycleGoods.filter((goods) => {
+    const shallbeDeletedGoods = recycleGoods.filter((goods: IGoods) => {
       const deletedDate = new Date(goods.update_time).getTime() // ms
       const now = Date.now() // ms
       const diff = now - deletedDate
@@ -70,7 +71,9 @@ const physicallyDeleteGoods = async () => {
       return days >= 30
     })
     if (shallbeDeletedGoods.length) {
-      const ids = shallbeDeletedGoods.map((goods) => goods._id.toString())
+      const ids = shallbeDeletedGoods.map((goods: IGoods) =>
+        goods._id?.toString()
+      )
       try {
         // console.log('待删除的商品 => ', ids);
         goodsModel.deleteMany({ deleted: 1, _id: { $in: ids } }).exec()

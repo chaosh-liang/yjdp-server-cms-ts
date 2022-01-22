@@ -21,8 +21,11 @@
     // typescript options here
     "paths": {
       "@/*": ["./src/*"]
-    }
+    },
+    "outDir": "dist",
+    "rootDir": "src",
+    "removeComments": true
   },
   "exclude": ["node_modules"],
-  "include": ["src"]
+  "include": ["src/**/*.ts", "src/@types/**/*.ts"]
 }

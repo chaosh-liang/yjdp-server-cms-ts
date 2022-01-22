@@ -1,5 +1,5 @@
 import { Schema, model } from 'mongoose'
-import type { ISeries } from '../../@types/typing'
+import type { ISeries } from '@/@types/typing'
 
 const schema = new Schema<ISeries>(
   {

@@ -4,6 +4,15 @@ module.exports = {
     // postMessage: true
   },
   rules: {
-    'space-before-function-paren': 0
-  }
+    'space-before-function-paren': 0,
+    camelcase: [
+      'error',
+      {
+        properties: 'never',
+        ignoreImports: true,
+        ignoreGlobals: true,
+        ignoreDestructuring: true,
+      },
+    ],
+  },
 }

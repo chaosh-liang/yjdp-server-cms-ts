@@ -1,9 +1,9 @@
 import Router from '@koa/router'
 import { ObjectId } from 'mongodb'
+import type { Request } from 'koa'
 import goodsModel from '../model/goods'
 import seriesModel from '../model/series'
 import categoryModel from '../model/categories'
-import type { Request } from 'koa'
 
 type UserRequest = Request & { params: Record<string, string> }
 

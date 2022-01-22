@@ -1,6 +1,7 @@
 import type { Schema } from 'mongoose'
 
 export interface IUser {
+  _id?: Schema.Types.ObjectId
   user_name: string
   password: string
   role: number
@@ -9,6 +10,7 @@ export interface IUser {
 }
 
 export interface IGoods {
+  _id?: Schema.Types.ObjectId
   name: string
   discount_price: number
   discount_threshold: number
@@ -29,6 +31,7 @@ export interface IGoods {
 }
 
 export interface ICategory {
+  _id?: Schema.Types.ObjectId
   name: string
   desc: string
   no: number
@@ -37,6 +40,7 @@ export interface ICategory {
 }
 
 export interface ISeries {
+  _id?: Schema.Types.ObjectId
   name: string
   icon_url: string
   no: number
@@ -47,6 +51,7 @@ export interface ISeries {
 }
 
 export interface IOrder {
+  _id?: Schema.Types.ObjectId
   user_id: Schema.Types.ObjectId
   goods_id: Schema.Types.ObjectId
   goods_name: string

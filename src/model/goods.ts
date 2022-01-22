@@ -1,5 +1,5 @@
 import { Schema, model } from 'mongoose'
-import type { IGoods } from '../../@types/typing'
+import type { IGoods } from '@/@types/typing'
 
 const schema = new Schema<IGoods>(
   {
