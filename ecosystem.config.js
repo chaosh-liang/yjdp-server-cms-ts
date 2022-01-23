@@ -3,7 +3,7 @@
  * @Email: broli.up.up.up@gmail.com
  * @Date: 2021-09-10 10:53:27
  * @LastEditors: Broli
- * @LastEditTime: 2022-01-22 23:18:35
+ * @LastEditTime: 2022-01-23 11:40:20
  * @Description: pm2 的配置文件
  * @Description: 静态文件目录：开发环境（本地）D:\yjdp_public\upload
  * @Description: 静态文件目录：生产环境（线上）/opt/material/server/yjdp_public/upload
@@ -27,7 +27,7 @@ switch (os.platform()) {
     uploadAbsoluteDir = `D:\\${PUBLIC_URL}\\${UPLOAD_URL}`
     break
   case 'darwin': // Mac
-    uploadAbsoluteDir = `/opt/${PUBLIC_URL}/${UPLOAD_URL}`
+    uploadAbsoluteDir = `${os.homedir()}/${PUBLIC_URL}/${UPLOAD_URL}`
     break
   case 'linux': // Linux
     uploadAbsoluteDir = `/opt/material/server/${PUBLIC_URL}/${UPLOAD_URL}`
