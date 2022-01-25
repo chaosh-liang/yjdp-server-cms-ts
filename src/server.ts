@@ -3,11 +3,11 @@
  * @Email: broli.up.up.up@gmail.com
  * @Date: 2021-08-15 22:00:36
  * @LastEditors: Broli
- * @LastEditTime: 2022-01-22 15:15:27
+ * @LastEditTime: 2022-01-25 12:32:40
  * @Description: 查看日志：pm2 logs process_name|process_id
  */
 
-import Koa from 'koa'
+import Koa = require('koa')
 import cors from '@koa/cors'
 import Router from '@koa/router'
 import bodyParser = require('koa-bodyparser')
