@@ -11,11 +11,9 @@
   - 5.4 查看状态：命令行（全局）输入 <code>pm2 ls</code>，即可看到对应服务和状态
   - 5.5 一些说明：<code>env</code> 改为对应的环境名称。windows 中可用 <code>git bash</code> 运行 Linux 命令
 - 6. 注意如果项目安装了依赖 <code>koa-static</code>，pm2 会与其冲突，无法启动服务
-- 7. 开发环境：需要先执行命令 <code>npm run build:dev</code> 以监听文件变化而重新编译生成 js 文件。再用 <code>pm2</code>启动服务。由于 pm2 中的 watch 不生效，所以改动文件后，需要执行 <code>sh restart.sh</code> 重启服务。
-  - 7.1 如果要实时调试和查看报错信息，可以不用 <code>pm2</code>，而直接用 <code>ts-node ./src/server.ts</code> 启动服务。但静态资源服务是<code>pm2</code>提供的，所以必须用 pm2 启动服务，然后用命令：<code>pm2 stop [id]</code> 停止某个服务进程，再使用 <code>ts-node</code> 单独启动服务。
-- 8. 生产环境：打包部署前，必须要有 <code>build</code> 目录，若没有，则执行 <code>npm run build:pro</code> 先生成编译后的文件，再打包部署到线上环境。启动服务即可 <code>sh pro.sh</code>
-- 9. 注意 node 的版本：node@16
+- 7. 注意 node 的版本：node@16
 
 #### ISSUE
 
-- 1. 【描述】<code>pm2</code> 直接运行 <code>src/server.ts</code> 文件启动不了。【方案】将<code>ts</code> 文件先编译成 <code>js</code> 文件，后用 <code>pm2</code> 执行 <code>build/server.js</code> 启动服务
+- 1. 【描述】<code>pm2</code> 直接运行 <code>src/server.ts</code> 文件启动不了。【方案】将 <code>ts</code> 文件先编译成 <code>js</code> 文件，后用 <code>pm2</code> 执行 <code>build/server.js</code> 启动服务：<code>sh ./bin/dev.sh</code>
+- 2. 【描述】<code>pm2 watch</code> 选项没起作用，即使用 <code>tsc -w</code> 重新编译出 <code>./build</code>，watch 也没作用，pm2 不会重新启动服务。【方案】修改文件后手动重启服务：<code>sh ./bin/restart.sh</code>

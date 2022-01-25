@@ -1,2 +1,2 @@
 #!/bin/bash
-pm2 restart file_server yjdp_server_cms
+npm run build && pm2 restart file_server yjdp_server_cms
