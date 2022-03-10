@@ -18,20 +18,20 @@ router.post('/', async (ctx) => {
 
   try {
     // 多条件模糊查询，聚合过来的字段无法查询
-    const fussy_search: any = [
+    const fuzzy_search: any = [
       { nick_name: { $regex: regExp } },
       { desc: { $regex: regExp } },
     ]
     if (_idRegExp.test(keyword))
-      fussy_search.unshift({ _id: { $eq: new ObjectId(keyword) } })
-    // console.log('t ', fussy_search)
+      fuzzy_search.unshift({ _id: { $eq: new ObjectId(keyword) } })
+    // console.log('t ', fuzzy_search)
 
     const total = await orderModel.countDocuments({
-      $or: fussy_search,
+      $or: fuzzy_search,
     })
     const res = await orderModel
       .aggregate()
-      .match({ $or: fussy_search })
+      .match({ $or: fuzzy_search })
       .project({
         _id: 0,
         user_id: 1,
