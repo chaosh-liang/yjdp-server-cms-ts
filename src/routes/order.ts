@@ -1,6 +1,9 @@
+import { ObjectId } from 'mongodb'
 import Router from '@koa/router'
 import orderModel from '../model/orders'
 const router = new Router()
+
+const _idRegExp = /^[a-z\d]{24}$/
 
 // 查询订单数据-分页
 router.post('/', async (ctx) => {
@@ -14,23 +17,21 @@ router.post('/', async (ctx) => {
   // console.log('模糊查询参数 => ', q, keyword, regExp);
 
   try {
+    // 多条件模糊查询，聚合过来的字段无法查询
+    const fussy_search: any = [
+      { nick_name: { $regex: regExp } },
+      { desc: { $regex: regExp } },
+    ]
+    if (_idRegExp.test(keyword))
+      fussy_search.unshift({ _id: { $eq: new ObjectId(keyword) } })
+    // console.log('t ', fussy_search)
+
     const total = await orderModel.countDocuments({
-      $or: [
-        // 多条件模糊查询，聚合过来的字段无法查询
-        { nick_name: { $regex: regExp } },
-        { desc: { $regex: regExp } },
-      ],
+      $or: fussy_search,
     })
     const res = await orderModel
       .aggregate()
-      .match({
-        $or: [
-          // 多条件模糊查询，聚合过来的字段无法查询
-          // { _id: { $regex: regExp } }, // _id 为 ObjectId 类型用不了模糊查询
-          { nick_name: { $regex: regExp } },
-          { desc: { $regex: regExp } },
-        ],
-      })
+      .match({ $or: fussy_search })
       .project({
         _id: 0,
         user_id: 1,

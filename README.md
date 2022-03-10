@@ -13,9 +13,8 @@
 - 6. 注意如果项目安装了依赖 <code>koa-static</code>，pm2 会与其冲突，无法启动服务
 - 7. 注意 node 的版本：node@16
 - 8. 【部署】
-  - 8.1 运行 <code>npm run build</code>
-  - 8.2 将根路径的所有文件打包压缩，放至服务器上
-  - 8.3 运行 <code>.bin</code> 下的生产环境的脚本即可
+  - 8.2 将整个项目打包压缩，放至服务器上
+  - 8.3 运行 <code>.bin</code> 下的 <code>pro.sh</code> 脚本即可
 
 #### ISSUE
 

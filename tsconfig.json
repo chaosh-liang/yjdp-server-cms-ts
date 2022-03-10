@@ -18,6 +18,7 @@
     "require": ["tsconfig-paths/register"]
   },
   "compilerOptions": {
+    "baseUrl": "./",
     // typescript options here
     "paths": {
       "@/*": ["./src/*"]
