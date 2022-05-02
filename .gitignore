@@ -48,3 +48,4 @@ debug.log
 /build
 .cache
 .analysis
+.clinic
