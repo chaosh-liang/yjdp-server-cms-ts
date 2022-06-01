@@ -1,32 +1,6 @@
-import https from 'https'
 import Router from '@koa/router'
 import userModel from '../model/users'
 const router = new Router()
-
-// 获取图片必应每日一图：Promise 封装请求
-const fetchBingImage = () => {
-  return new Promise((resolve, reject) => {
-    https
-      .get(
-        'https://cn.bing.com/HPImageArchive.aspx?format=js&idx=0&n=1',
-        (resp) => {
-          let data = ''
-          resp.on('data', (chunk) => {
-            data += chunk
-          })
-
-          resp.on('end', () => {
-            // console.log('data => ', data);
-            resolve(JSON.parse(data))
-          })
-        }
-      )
-      .on('error', (error) => {
-        console.log('Error: ', error.message)
-        reject(error.message)
-      })
-  })
-}
 
 // 登录
 router.post('/login', async (ctx) => {
@@ -57,24 +31,6 @@ router.post('/login', async (ctx) => {
     }
   } catch (error) {
     console.log('/login error => ', error)
-  }
-})
-
-// 获取图片必应每日一图
-router.get('/bing', async (ctx) => {
-  try {
-    const data = await fetchBingImage()
-    if (data) {
-      // console.log('/bing success => ', data);
-      ctx.body = {
-        error_code: '00',
-        data: { res: { data } },
-        error_msg: '',
-      }
-    }
-  } catch (error) {
-    console.log('/bing error => ', error)
-    ctx.body = { error_code: '00', data: null, error_msg: error }
   }
 })
 
