@@ -18,5 +18,7 @@
 
 #### ISSUE
 
-- 1. 【描述】<code>pm2</code> 直接运行 <code>src/server.ts</code> 文件启动不了。【方案】将 <code>ts</code> 文件先编译成 <code>js</code> 文件，后用 <code>pm2</code> 执行 <code>build/server.js</code> 启动服务：<code>sh ./bin/dev.sh</code>
-- 2. 【描述】<code>pm2 watch</code> 选项没起作用，即使用 <code>tsc -w</code> 重新编译出 <code>./build</code>，watch 也没作用，pm2 不会重新启动服务。【方案】修改文件后手动重启服务：<code>sh ./bin/restart.sh</code>
+- 1. 【描述】<code>pm2</code> 直接运行 <code>src/server.ts</code> 文件启动不了。
+  - 【方案】将 <code>ts</code> 文件先编译成 <code>js</code> 文件，后用 <code>pm2</code> 执行 <code>build/server.js</code> 启动服务：<code>sh ./bin/dev.sh</code>
+- 2. 【描述】<code>pm2 watch</code> 选项没起作用，即使用 <code>tsc -w</code> 重新编译出 <code>./build</code>，watch 也没作用，pm2 不会重新启动服务。
+  - 【方案】修改文件后手动重启服务：<code>sh ./bin/restart.sh</code>
