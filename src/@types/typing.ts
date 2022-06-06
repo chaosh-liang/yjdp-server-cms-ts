@@ -11,15 +11,13 @@ export interface IUser {
 
 export interface IGoods {
   _id?: Schema.Types.ObjectId
-  name: string
-  discount_price: number
-  discount_threshold: number
+  name_zh: string
+  name_en: string
   price: number
   home_banner: boolean
   home_display: boolean
-  desc: string
-  currency_unit: string
-  count_unit: string
+  desc_zh: string
+  desc_en: string
   icon_url: string
   series_id: Schema.Types.ObjectId
   category_id: Schema.Types.ObjectId
@@ -32,7 +30,8 @@ export interface IGoods {
 
 export interface ICategory {
   _id?: Schema.Types.ObjectId
-  name: string
+  name_zh: string
+  name_en: string
   desc: string
   no: number
   create_time: Date
@@ -41,7 +40,8 @@ export interface ICategory {
 
 export interface ISeries {
   _id?: Schema.Types.ObjectId
-  name: string
+  name_zh: string
+  name_en: string
   icon_url: string
   no: number
   desc: string
@@ -54,13 +54,13 @@ export interface IOrder {
   _id?: Schema.Types.ObjectId
   user_id: Schema.Types.ObjectId
   goods_id: Schema.Types.ObjectId
-  goods_name: string
+  goods_name_zh: string
+  goods_name_en: string
   gcount: number
   status: number // 1：待付款，2：待发货，3：已完成
-  actual_pay: number // 实付款（生成订单时计算）
-  desc: string
+  desc_zh: string
+  desc_en: string
   icon_url: string
-  currency_unit: string
   nick_name: string
   create_time: Date
   update_time: Date

@@ -3,15 +3,13 @@ import type { IGoods } from '@/@types/typing'
 
 const schema = new Schema<IGoods>(
   {
-    name: String, // String is shorthand for {type: String}
-    discount_price: Number,
-    discount_threshold: Number,
+    name_zh: String, // String is shorthand for {type: String}
+    name_en: String,
     price: Number,
     home_banner: Boolean,
     home_display: Boolean,
-    desc: String,
-    currency_unit: String,
-    count_unit: String,
+    desc_zh: String,
+    desc_en: String,
     icon_url: String,
     series_id: Schema.Types.ObjectId,
     category_id: Schema.Types.ObjectId,

@@ -39,7 +39,8 @@ router.get('/s/:id', async (ctx) => {
     .project({
       // 过滤&添加新键。要保留的原键，设为 1
       _id: 1,
-      name: 1,
+      name_zh: 1,
+      name_en: 1,
       icon_url: 1,
       no: 1,
       desc: 1,

@@ -18,15 +18,19 @@ router.post('/', async (ctx) => {
     // 包含了系列ID
     condition = [
       // 多条件模糊查询，聚合过来的字段无法查询
-      { name: { $regex: regExp } },
-      { desc: { $regex: regExp } },
+      { name_zh: { $regex: regExp } },
+      { desc_zh: { $regex: regExp } },
+      { name_en: { $regex: regExp } },
+      { desc_en: { $regex: regExp } },
       { series_id: new ObjectId(q) },
     ]
   } else {
     condition = [
       // 多条件模糊查询，聚合过来的字段无法查询
-      { name: { $regex: regExp } },
-      { desc: { $regex: regExp } },
+      { name_zh: { $regex: regExp } },
+      { desc_zh: { $regex: regExp } },
+      { name_en: { $regex: regExp } },
+      { desc_en: { $regex: regExp } },
     ]
   }
   // console.log('模糊查询参数 => ', q, keyword, regExp, condition);
@@ -57,23 +61,23 @@ router.post('/', async (ctx) => {
       .unwind('category_data', 'series_data')
       .project({
         _id: 1,
-        name: 1,
-        discount_price: 1,
-        discount_threshold: 1,
+        name_zh: 1,
+        name_en: 1,
         price: 1,
         home_banner: 1,
         home_display: 1,
-        desc: 1,
-        currency_unit: 1,
-        count_unit: 1,
+        desc_zh: 1,
+        desc_en: 1,
         icon_url: 1,
         series_id: 1,
         category_id: 1,
         desc_url: 1,
         banner_url: 1,
         category_data: 1,
-        category_name: '$category_data.name',
-        series_name: '$series_data.name',
+        category_name_zh: '$category_data.name_zh',
+        series_name_zh: '$series_data.name_zh',
+        category_name_en: '$category_data.name_en',
+        series_name_en: '$series_data.name_en',
         create_time: 1,
         update_time: 1,
       })
