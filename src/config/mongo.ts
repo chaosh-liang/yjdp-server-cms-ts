@@ -4,7 +4,7 @@
 
 import { connect as mongooseConnect } from 'mongoose'
 
-const DB_URL = 'mongodb://lcs:up2021@localhost/dev'
+const DB_URL = 'mongodb://lcs:up2021@localhost/yjdp'
 
 export default {
   connect: () => {

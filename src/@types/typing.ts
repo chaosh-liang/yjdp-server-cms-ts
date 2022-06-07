@@ -56,12 +56,13 @@ export interface IOrder {
   goods_id: Schema.Types.ObjectId
   goods_name_zh: string
   goods_name_en: string
+  goods_desc_zh: string
+  goods_desc_en: string
   gcount: number
   status: number // 1：待付款，2：待发货，3：已完成
-  desc_zh: string
-  desc_en: string
   icon_url: string
   nick_name: string
+  actual_pay: number
   create_time: Date
   update_time: Date
 }
