@@ -24,8 +24,6 @@ switch (os.platform()) {
   // no default
 }
 
-console.log('fileDirectory schedule.ts => ', fileDirectory)
-
 // 清理没用的图片
 const clearUselessPicture = async () => {
   const allGoods = await goodsModel.find()

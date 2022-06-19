@@ -25,8 +25,6 @@ switch (os.platform()) {
   // no default
 }
 
-console.log('fileDirectory upload.ts => ', fileDirectory)
-
 // 上传图片
 router.post(
   '/',
