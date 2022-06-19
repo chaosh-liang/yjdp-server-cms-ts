@@ -1,3 +1,4 @@
+import os from 'os'
 import fs from 'fs'
 import path from 'path'
 import goodsModel from '../model/goods'
@@ -7,13 +8,23 @@ import type { IGoods, ISeries } from '@/@types/typing'
 
 const PUBLIC_URL = 'yjdp_public'
 const UPLOAD_URL = 'upload'
-let fileDirectory = path.resolve(`D:\\${PUBLIC_URL}\\${UPLOAD_URL}`)
+let fileDirectory = ''
 
-if (process.env.NODE_ENV === 'production') {
-  fileDirectory = path.resolve(
-    `/opt/material/server/${PUBLIC_URL}/${UPLOAD_URL}`
-  )
+switch (os.platform()) {
+  case 'win32': // Windows
+    fileDirectory = path.resolve(`D:\\${PUBLIC_URL}\\${UPLOAD_URL}`)
+    break
+  case 'darwin': // Mac
+    fileDirectory = path.resolve(`${os.homedir()}/${PUBLIC_URL}/${UPLOAD_URL}`)
+    break
+  case 'linux': // Linux
+    fileDirectory = path.resolve(
+      `/opt/material/server/${PUBLIC_URL}/${UPLOAD_URL}`
+    )
+  // no default
 }
+
+console.log('fileDirectory schedule.ts => ', fileDirectory)
 
 // 清理没用的图片
 const clearUselessPicture = async () => {

@@ -3,18 +3,29 @@ import koaBody from 'koa-body'
 import Router from '@koa/router'
 import type { File } from 'formidable'
 
+import os from 'os'
 const router = new Router()
 const PUBLIC_URL = 'yjdp_public'
 const UPLOAD_URL = 'upload'
-let fileDirectory = `D:\\${PUBLIC_URL}\\${UPLOAD_URL}`
-
+let fileDirectory = ''
 // @Description 见 server.js 中对应的说明
 let protocol_ip = 'http://localhost:7715' // 区分环境
 
-if (process.env.NODE_ENV === 'production') {
-  protocol_ip = 'https://liangchaoshun.top'
-  fileDirectory = `/opt/material/server/${PUBLIC_URL}/${UPLOAD_URL}`
+switch (os.platform()) {
+  case 'win32': // Windows
+    fileDirectory = path.resolve(`D:\\${PUBLIC_URL}\\${UPLOAD_URL}`)
+    break
+  case 'darwin': // Mac
+    fileDirectory = path.resolve(`${os.homedir()}/${PUBLIC_URL}/${UPLOAD_URL}`)
+    break
+  case 'linux': // Linux
+    fileDirectory = path.resolve(
+      `/opt/material/server/${PUBLIC_URL}/${UPLOAD_URL}`
+    )
+  // no default
 }
+
+console.log('fileDirectory upload.ts => ', fileDirectory)
 
 // 上传图片
 router.post(
