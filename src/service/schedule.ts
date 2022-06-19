@@ -12,15 +12,14 @@ let fileDirectory = ''
 
 switch (os.platform()) {
   case 'win32': // Windows
-    fileDirectory = path.resolve(`D:\\${PUBLIC_URL}\\${UPLOAD_URL}`)
+    fileDirectory = `D:\\${PUBLIC_URL}\\${UPLOAD_URL}`
     break
   case 'darwin': // Mac
-    fileDirectory = path.resolve(`${os.homedir()}/${PUBLIC_URL}/${UPLOAD_URL}`)
+    fileDirectory = `${os.homedir()}/${PUBLIC_URL}/${UPLOAD_URL}`
     break
   case 'linux': // Linux
-    fileDirectory = path.resolve(
-      `/opt/material/server/${PUBLIC_URL}/${UPLOAD_URL}`
-    )
+    fileDirectory = `/opt/material/server/${PUBLIC_URL}/${UPLOAD_URL}`
+
   // no default
 }
 
